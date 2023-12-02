@@ -8,7 +8,7 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 
 import java.util.Date;
 
-@Node("Shift")
+@Node("Salary")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

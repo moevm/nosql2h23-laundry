@@ -7,9 +7,6 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 import java.util.List;
 
 @Node("Employee")
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Getter
 @Setter
 public class Employee extends User {

@@ -9,8 +9,8 @@ import java.util.Date;
 
 
 @Node("User")
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Getter
 @Setter

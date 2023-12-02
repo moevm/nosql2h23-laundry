@@ -2,6 +2,8 @@ package com.example.springtest.model;
 
 
 import lombok.*;
+import org.springframework.data.neo4j.core.schema.GeneratedValue;
+import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
@@ -12,6 +14,10 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 @Getter
 @Setter
 public class Warehouse {
+    @Id
+    @GeneratedValue
+    private Long id;
+
     @Relationship(type = "STORE", direction = Relationship.Direction.OUTGOING)
     private Product product;
 

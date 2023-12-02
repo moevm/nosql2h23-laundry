@@ -1,7 +1,18 @@
 package com.example.springtest.repository;
 
+import com.example.springtest.model.Client;
 import com.example.springtest.model.Order;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
+import org.springframework.data.neo4j.repository.query.Query;
+
+import java.util.Date;
+import java.util.List;
 
 public interface OrderRepository extends Neo4jRepository<Order, Long> {
+
+    @Query("MATCH (o:Order) RETURN o")
+    List<Order> getAllOrdersCustomQuery();
+
+    @Query("CREATE (o:Order {status: $status, price: $price, creationDate: $creationDate, editDate: $editDate}) RETURN o")
+    Order addOrderCustomQuery(String status, Float price, Date creationDate, Date editDate);
 }

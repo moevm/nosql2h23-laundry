@@ -7,7 +7,6 @@ import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
 import java.util.Date;
-import java.util.List;
 
 @Node("Shift")
 @AllArgsConstructor
