@@ -18,12 +18,12 @@ public class OrderService {
     }
 
     public Order addOrder(Order order) {
-        return orderRepository.addOrderCustomQuery(order.getStatus(), order.getPrice(), order.getCreationDate(), order.getEditDate());
+        return orderRepository.addOrder(order.getStatus(), order.getPrice(), order.getCreationDate(), order.getEditDate());
     }
 
     // Метод для получения всех пользователей
     public List<Order> getAllOrders() {
-        return (List<Order>) orderRepository.getAllOrdersCustomQuery();
+        return (List<Order>) orderRepository.getAllOrders();
     }
 }
 

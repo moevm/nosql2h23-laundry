@@ -11,8 +11,8 @@ import java.util.List;
 public interface OrderRepository extends Neo4jRepository<Order, Long> {
 
     @Query("MATCH (o:Order) RETURN o")
-    List<Order> getAllOrdersCustomQuery();
+    List<Order> getAllOrders();
 
     @Query("CREATE (o:Order {status: $status, price: $price, creationDate: $creationDate, editDate: $editDate}) RETURN o")
-    Order addOrderCustomQuery(String status, Float price, Date creationDate, Date editDate);
+    Order addOrder(String status, Float price, Date creationDate, Date editDate);
 }

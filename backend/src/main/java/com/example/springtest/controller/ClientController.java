@@ -18,13 +18,11 @@ public class ClientController {
         this.clientService = clientService;
     }
 
-    // Endpoint для добавления пользователя
     @PostMapping("/add")
     public @ResponseBody Client addClient(@RequestBody Client client) {
         return clientService.addClient(client);
     }
 
-    // Endpoint для получения всех пользователей
     @GetMapping("/getAll")
     public List<Client> getAllClients() {
         return clientService.getAllClients();
