@@ -1,4 +1,4 @@
-package com.example.springtest.dto;
+package com.example.springtest.dto.login;
 
 import lombok.*;
 
@@ -9,8 +9,10 @@ import lombok.*;
 @AllArgsConstructor
 public class LoginResponse {
 
-    private Long id;
+    private String id;
+
     private String name;
+
     private String role;
 
 }

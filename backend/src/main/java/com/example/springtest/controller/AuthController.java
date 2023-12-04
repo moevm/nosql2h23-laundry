@@ -1,7 +1,7 @@
 package com.example.springtest.controller;
 
-import com.example.springtest.dto.LoginRequest;
-import com.example.springtest.dto.LoginResponse;
+import com.example.springtest.dto.login.LoginRequest;
+import com.example.springtest.dto.login.LoginResponse;
 import com.example.springtest.exceptions.controller.NoSuchUserException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin
-public class MainController {
+public class AuthController {
 
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public LoginResponse login(@RequestBody LoginRequest loginRequest) {
 
         LoginResponse response = null;
@@ -20,28 +20,28 @@ public class MainController {
         switch (loginRequest.getLogin()) {
             case "Client":
                 response = LoginResponse.builder()
-                        .id(342568L)
+                        .id("ABF4562375")
                         .name("Kate1")
                         .role("CLIENT")
                         .build();
                 break;
             case "Admin":
                 response = LoginResponse.builder()
-                        .id(2092456L)
+                        .id("ABF453864375")
                         .name("Kate2")
                         .role("ADMIN")
                         .build();
                 break;
             case "Director":
                 response = LoginResponse.builder()
-                        .id(432365L)
+                        .id("3BFFFFF874")
                         .name("Kate3")
                         .role("DIRECTOR")
                         .build();
                 break;
             case "Super":
                 response = LoginResponse.builder()
-                        .id(182L)
+                        .id("6356974")
                         .name("Kate4")
                         .role("SUPERUSER")
                         .build();

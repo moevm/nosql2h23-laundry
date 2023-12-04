@@ -19,7 +19,7 @@ public interface ClientRepository extends Neo4jRepository<Client, String> {
     Client addClient(String fullName, String password, String email, Date creationDate, Date editDate);
 
 
-    @Query("MATCH (c:Client {fullName: $login}) RETURN c LIMIT 1")
+    @Query("MATCH (c:Client {login: $login}) RETURN c LIMIT 1")
     Optional<Client> findByLogin(String login);
 
     @Query("MATCH (c:Client {id: $id}) RETURN c LIMIT 1")

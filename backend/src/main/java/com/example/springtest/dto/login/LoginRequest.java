@@ -1,4 +1,4 @@
-package com.example.springtest.dto;
+package com.example.springtest.dto.login;
 
 import lombok.*;
 
