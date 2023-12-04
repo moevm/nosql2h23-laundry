@@ -5,6 +5,7 @@ import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -26,7 +27,7 @@ public class User {
 
     private String email;
 
-    private Date creationDate;
+    private LocalDateTime creationDate;
 
-    private Date editDate;
+    private LocalDateTime editDate;
 }

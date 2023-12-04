@@ -7,6 +7,10 @@ import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
+
 @Node("Warehouse")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,6 +21,14 @@ public class Warehouse {
     @Id
     @GeneratedValue(GeneratedValue.UUIDGenerator.class)
     private String id;
+
+    private String address;
+
+    private List<String> schedule;
+
+    private LocalDateTime creationDate;
+
+    private LocalDateTime editDate;
 
     @Relationship(type = "STORE", direction = Relationship.Direction.OUTGOING)
     private Product product;

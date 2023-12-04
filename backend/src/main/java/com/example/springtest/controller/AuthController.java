@@ -3,6 +3,8 @@ package com.example.springtest.controller;
 import com.example.springtest.dto.login.LoginRequest;
 import com.example.springtest.dto.login.LoginResponse;
 import com.example.springtest.exceptions.controller.NoSuchUserException;
+import com.example.springtest.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,7 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin
+@RequiredArgsConstructor
 public class AuthController {
+
+    private final UserService userService;
 
     @PostMapping("/api/login")
     public LoginResponse login(@RequestBody LoginRequest loginRequest) {

@@ -22,7 +22,7 @@ public class ClientService {
         // TODO: use data!
 //        return clientRepository.addClient(client.getFullName(), client.getPassword(), client.getEmail(), client.getCreationDate(), client.getEditDate());
 
-        return Client.builder().id("SFGdfgfg").build();
+        return Client.clientBuilder().id("SFGdfgfg").build();
     }
 
     @Transactional

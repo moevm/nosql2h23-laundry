@@ -6,6 +6,7 @@ import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -25,9 +26,9 @@ public class Order {
 
     private String status;
 
-    private Date creationDate;
+    private LocalDateTime creationDate;
 
-    private Date editDate;
+    private LocalDateTime editDate;
 
     @Relationship(type = "ORDERED_BY", direction = Relationship.Direction.OUTGOING)
     private Client client;

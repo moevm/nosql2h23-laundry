@@ -7,6 +7,7 @@ import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -23,5 +24,5 @@ public interface AdminRepository extends Neo4jRepository<Admin, String> {
     Optional<Admin> getById(Long id);
 
     @Query("CREATE (a:Admin {fullName: $fullName, password: $password, email: $email, creationDate: $creationDate, editDate: $editDate, role: $role, phone: $phone, schedule: $schedule}) RETURN a")
-    Admin addAdmin(String fullName, String password, String email, Date creationDate, Date editDate, String role, String phone, List<String> schedule);
+    Admin addAdmin(String fullName, String password, String email, LocalDateTime creationDate, LocalDateTime editDate, String role, String phone, List<String> schedule);
 }
