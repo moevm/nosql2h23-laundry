@@ -1,4 +1,4 @@
-package com.example.springtest.controllers;
+package com.example.springtest.controller;
 
 import com.example.springtest.dto.LoginRequest;
 import com.example.springtest.dto.LoginResponse;

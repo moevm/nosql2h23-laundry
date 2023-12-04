@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AdminRepository extends Neo4jRepository<Admin, Long> {
+public interface AdminRepository extends Neo4jRepository<Admin, String> {
     @Query("MATCH (a:Admin) RETURN a")
     List<Admin> getAllAdmins();
 

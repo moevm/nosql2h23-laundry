@@ -15,10 +15,13 @@ import java.util.Date;
 @Getter
 @Setter
 public class Salary {
+
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(GeneratedValue.UUIDGenerator.class)
+    private String id;
+
     private Float amount;
+
     private Date month;
 
     @Relationship(type = "RECEIVED_By", direction = Relationship.Direction.OUTGOING)

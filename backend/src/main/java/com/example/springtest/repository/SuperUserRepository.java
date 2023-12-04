@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-public interface SuperUserRepository extends Neo4jRepository<SuperUser, Long> {
+public interface SuperUserRepository extends Neo4jRepository<SuperUser, String> {
     @Query("MATCH (s:SuperUser) RETURN s")
     List<SuperUser> getAllSuperUsers();
 

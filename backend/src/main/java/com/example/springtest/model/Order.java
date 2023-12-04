@@ -16,12 +16,17 @@ import java.util.List;
 @Getter
 @Setter
 public class Order {
+
     @Id
-    @GeneratedValue
-    private Long id;
-    private String status;
+    @GeneratedValue(GeneratedValue.UUIDGenerator.class)
+    private String id;
+
     private Float price;
+
+    private String status;
+
     private Date creationDate;
+
     private Date editDate;
 
     @Relationship(type = "ORDERED_BY", direction = Relationship.Direction.OUTGOING)

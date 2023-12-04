@@ -16,12 +16,17 @@ import java.util.List;
 @Getter
 @Setter
 public class Branch {
+
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(GeneratedValue.UUIDGenerator.class)
+    private String id;
+
     private String address;
+
     private List<String> schedule;
+
     private Date creationDate;
+
     private Date editDate;
 
     @Relationship(type = "EXECUTED_BY", direction = Relationship.Direction.INCOMING)

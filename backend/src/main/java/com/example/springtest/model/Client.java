@@ -9,6 +9,8 @@ import java.util.List;
 @Getter
 @Setter
 public class Client extends User {
+
     @Relationship(type = "ORDERED_BY", direction = Relationship.Direction.INCOMING)
     private List<Order> orders;
+
 }

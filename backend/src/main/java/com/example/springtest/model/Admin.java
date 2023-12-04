@@ -6,5 +6,6 @@ import org.springframework.data.neo4j.core.schema.Node;
 @Node("Admin")
 @Getter
 @Setter
-public class Admin extends Employee{
+public class Admin extends Employee {
+
 }

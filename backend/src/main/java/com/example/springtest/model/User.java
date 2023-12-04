@@ -15,12 +15,18 @@ import java.util.Date;
 @Getter
 @Setter
 public class User {
+
     @Id
-    @GeneratedValue
-    private Long id;
-    private String fullName;
+    @GeneratedValue(GeneratedValue.UUIDGenerator.class)
+    private String id;
+
     private String password;
+
+    private String fullName;
+
     private String email;
+
     private Date creationDate;
+
     private Date editDate;
 }

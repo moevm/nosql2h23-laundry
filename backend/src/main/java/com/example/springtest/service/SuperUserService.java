@@ -2,6 +2,7 @@ package com.example.springtest.service;
 
 import com.example.springtest.model.SuperUser;
 import com.example.springtest.repository.SuperUserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,14 +11,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class SuperUserService {
 
     private final SuperUserRepository superUserRepository;
-
-    @Autowired
-    public SuperUserService(SuperUserRepository superUserRepository) {
-        this.superUserRepository = superUserRepository;
-    }
 
     public SuperUser addSuperUser(SuperUser superUser) {
         return superUserRepository.addSuperUser(superUser.getFullName(), superUser.getPassword(), superUser.getEmail(), superUser.getCreationDate(), superUser.getEditDate(), superUser.getRole(), superUser.getPhone(), superUser.getSchedule());

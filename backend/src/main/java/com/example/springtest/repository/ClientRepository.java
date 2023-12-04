@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ClientRepository extends Neo4jRepository<Client, Long> {
+public interface ClientRepository extends Neo4jRepository<Client, String> {
     @Query("MATCH (c:Client) RETURN c")
     List<Client> getAllClients();
 

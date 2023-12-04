@@ -1,6 +1,7 @@
 package com.example.springtest.service;
 
 import com.example.springtest.model.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import com.example.springtest.model.Client;
@@ -12,14 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ClientService {
 
     private final ClientRepository clientRepository;
-
-    @Autowired
-    public ClientService(ClientRepository clientRepository) {
-        this.clientRepository = clientRepository;
-    }
 
     public Client addClient(Client client) {
         return clientRepository.addClient(client.getFullName(), client.getPassword(), client.getEmail(), client.getCreationDate(), client.getEditDate());

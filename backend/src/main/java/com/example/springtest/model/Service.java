@@ -16,9 +16,10 @@ import java.util.List;
 @Getter
 @Setter
 public class Service {
+
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(GeneratedValue.UUIDGenerator.class)
+    private String id;
 
     private String type;
 

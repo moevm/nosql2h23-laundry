@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-public interface DirectorRepository extends Neo4jRepository<Director, Long> {
+public interface DirectorRepository extends Neo4jRepository<Director, String> {
     @Query("MATCH (d:Director) RETURN d")
     List<Director> getAllDirectors();
 

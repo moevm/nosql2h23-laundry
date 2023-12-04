@@ -15,8 +15,8 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 @Setter
 public class Warehouse {
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(GeneratedValue.UUIDGenerator.class)
+    private String id;
 
     @Relationship(type = "STORE", direction = Relationship.Direction.OUTGOING)
     private Product product;

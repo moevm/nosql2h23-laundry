@@ -14,9 +14,12 @@ import java.util.Date;
 @Getter
 @Setter
 public class Product {
+
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(GeneratedValue.UUIDGenerator.class)
+    private String id;
+
     private String type;
+
     private Float price;
 }

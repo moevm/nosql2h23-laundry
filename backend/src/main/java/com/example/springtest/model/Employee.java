@@ -10,8 +10,11 @@ import java.util.List;
 @Getter
 @Setter
 public class Employee extends User {
+
     private String role;
+
     private String phone;
+
     private List<String> schedule;
 
     @Relationship(type = "ADMINISTERS", direction = Relationship.Direction.OUTGOING)

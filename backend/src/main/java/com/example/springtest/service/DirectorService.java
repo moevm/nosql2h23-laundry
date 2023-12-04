@@ -2,6 +2,7 @@ package com.example.springtest.service;
 
 import com.example.springtest.model.Director;
 import com.example.springtest.repository.DirectorRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DirectorService {
 
     private final DirectorRepository directorRepository;
-
-    @Autowired
-    public DirectorService(DirectorRepository directorRepository) {
-        this.directorRepository = directorRepository;
-    }
 
     public Director addDirector(Director director) {
         return directorRepository.addDirector(director.getFullName(), director.getPassword(), director.getEmail(), director.getCreationDate(), director.getEditDate(), director.getRole(), director.getPhone(), director.getSchedule());

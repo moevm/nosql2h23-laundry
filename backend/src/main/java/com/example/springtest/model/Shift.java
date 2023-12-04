@@ -15,9 +15,11 @@ import java.util.Date;
 @Getter
 @Setter
 public class Shift {
+
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(GeneratedValue.UUIDGenerator.class)
+    private String id;
+
     private Date date;
 
     @Relationship(type = "OPENED_BY", direction = Relationship.Direction.OUTGOING)

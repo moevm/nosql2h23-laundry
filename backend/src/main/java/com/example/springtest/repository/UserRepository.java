@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository extends Neo4jRepository<User, Long> {
+public interface UserRepository extends Neo4jRepository<User, String> {
     @Query("MATCH (u:User) RETURN u")
     List<User> getAllUsers();
 
@@ -17,6 +17,6 @@ public interface UserRepository extends Neo4jRepository<User, Long> {
     Optional<User> findByLogin(String login);
 
     @Query("MATCH (u:User {id: $id}) RETURN u LIMIT 1")
-    Optional<User> findById(String login);
+    Optional<User> findById(String id);
 
 }
