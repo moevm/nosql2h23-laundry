@@ -21,6 +21,7 @@ import {BranchesList} from "./pages/BranchesList/BranchesList";
 import {NewWarehouse} from "./pages/NewWarehouse/NewWarehouse";
 import {NewBranch} from "./pages/NewBranch/NewBranch";
 import {NewEmployee} from "./pages/NewEmployee/NewEmployee";
+import {NewClient} from "./pages/NewClient/NewClient";
 
 import {Provider} from "react-redux";
 import store from "./store";
@@ -78,6 +79,10 @@ const router = createBrowserRouter([
     {
         path: "/new-employee",
         element: <NewEmployee/>
+    },
+    {
+        path: "/new-client",
+        element: <NewClient/>
     }
 ]);
 
