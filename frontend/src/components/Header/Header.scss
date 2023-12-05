@@ -1,0 +1,39 @@
+
+#small_title {
+  display: flex;
+  gap: 21px;
+
+  position: absolute;
+  left: 40px;
+
+  cursor: pointer;
+
+  .small-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  h4 {
+    width: 220px;
+  }
+}
+
+#header {
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 40px;
+
+  width: 100vw;
+  height: 80px;
+
+  background: var(--cyan-200, #9EEAF9);
+}
+
+#user-icon {
+
+  position: absolute;
+  right: 39px;
+}

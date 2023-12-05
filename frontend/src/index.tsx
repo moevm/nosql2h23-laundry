@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 import {App} from './App';
 import {NotFound} from "./pages/NotFound/NotFound";
-
+import {SignIn} from "./pages/SignIn/SignIn";
 import {Provider} from "react-redux";
 import store from "./store";
 
@@ -19,6 +19,10 @@ const router = createBrowserRouter([
         path: "/",
         element: <App/>,
         errorElement: <NotFound/>
+    },
+    {
+        path: "/sign_in",
+        element: <SignIn/>
     }
 ]);
 

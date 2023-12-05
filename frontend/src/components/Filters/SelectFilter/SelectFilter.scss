@@ -1,0 +1,33 @@
+.select-filter-wrapper {
+
+  position: relative;
+
+  .settings-window {
+    position: absolute;
+    left: -100px;
+    top: 30px;
+    width: 200px;
+    height: auto;
+
+    padding: 15px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    border: 2px solid #c0b3ac;
+    border-radius: 15px;
+    background: #b1fff2;
+
+    .form-label {
+      margin: 0;
+    }
+
+    .control-buttons {
+      display: flex;
+      justify-content: space-evenly;
+
+      flex: 1 0 0;
+    }
+  }
+}

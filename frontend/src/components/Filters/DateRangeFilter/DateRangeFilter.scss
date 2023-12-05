@@ -1,0 +1,40 @@
+.date-filter-wrapper {
+
+  position: relative;
+
+  .settings-window {
+    position: absolute;
+    width: 200px;
+    left: -100px;
+    top: 30px;
+
+    padding: 15px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    border: 2px solid #c0b3ac;
+    border-radius: 15px;
+    background: #b1fff2;
+
+    .form-label {
+      margin: 0;
+    }
+
+    .react-date-picker__wrapper {
+      border-width: 3px;
+    }
+
+    .invalid > .react-date-picker__wrapper {
+      border-color: red;
+    }
+
+    .control-buttons {
+      display: flex;
+      justify-content: space-evenly;
+
+      flex: 1 0 0;
+    }
+  }
+}
