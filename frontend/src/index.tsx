@@ -16,6 +16,7 @@ import {MainPage} from "./pages/MainPage/MainPage";
 import {OrdersList} from "./pages/OrdersList/OrdersList";
 import {WarehousesList} from "./pages/WarehousesList/WarehousesList";
 import {EmployeesList} from "./pages/EmployеesList/EmployеesList";
+import {ClientsList} from "./pages/ClientsList/ClientsList";
 
 import {Provider} from "react-redux";
 import store from "./store";
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
     {
         path: "/employees-list",
         element: <EmployeesList/>
+    },
+    {
+        path: "/clients-list",
+        element: <ClientsList/>
     }
 ]);
 
