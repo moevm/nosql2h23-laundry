@@ -11,6 +11,7 @@ import {
 import {App} from './App';
 import {NotFound} from "./pages/NotFound/NotFound";
 import {SignIn} from "./pages/SignIn/SignIn";
+import {SignUp} from "./pages/SignUp/SignUp";
 import {Provider} from "react-redux";
 import store from "./store";
 
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
     {
         path: "/sign_in",
         element: <SignIn/>
+    },
+    {
+        path: "/sign_up",
+        element: <SignUp/>
     }
 ]);
 
