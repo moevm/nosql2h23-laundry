@@ -8,6 +8,7 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Node("Branch")
 @AllArgsConstructor
@@ -18,8 +19,7 @@ import java.util.List;
 public class Branch {
 
     @Id
-    @GeneratedValue(GeneratedValue.UUIDGenerator.class)
-    private String id;
+    private UUID id;
 
     private String address;
 

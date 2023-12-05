@@ -22,29 +22,6 @@ public class ClientController {
 
     private final ClientService clientService;
 
-    @PostMapping("/api/sign_up")
-    public SignUpResponse signUp(@RequestBody SignUpRequest request) {
-
-        Optional<Client> client = clientService.getClientByLogin(request.getLogin());
-
-        if (client.isPresent()) {
-            throw new UserAlreadyExistsException();
-        }
-
-        Client newClient = clientService.addClient(
-                NewClientData.builder()
-                        .login(request.getLogin())
-                        .password(request.getPassword())
-                        .fullName(request.getFullName())
-                        .email(request.getEmail())
-                        .build()
-        );
-
-        return SignUpResponse.builder()
-                .id(newClient.getId())
-                .build();
-    }
-
     @GetMapping("/api/clients/getAll")
     public List<Client> getAllClients() {
         return clientService.getAllClients();

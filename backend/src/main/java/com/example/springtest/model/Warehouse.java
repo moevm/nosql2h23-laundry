@@ -10,6 +10,7 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Node("Warehouse")
 @AllArgsConstructor
@@ -19,8 +20,7 @@ import java.util.List;
 @Setter
 public class Warehouse {
     @Id
-    @GeneratedValue(GeneratedValue.UUIDGenerator.class)
-    private String id;
+    private UUID id;
 
     private String address;
 

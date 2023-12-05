@@ -7,6 +7,7 @@ import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Node("Salary")
 @AllArgsConstructor
@@ -17,8 +18,7 @@ import java.util.Date;
 public class Salary {
 
     @Id
-    @GeneratedValue(GeneratedValue.UUIDGenerator.class)
-    private String id;
+    private UUID id;
 
     private Float amount;
 

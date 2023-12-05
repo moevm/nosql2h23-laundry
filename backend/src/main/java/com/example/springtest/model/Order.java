@@ -9,6 +9,7 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Node("Order")
 @AllArgsConstructor
@@ -19,8 +20,7 @@ import java.util.List;
 public class Order {
 
     @Id
-    @GeneratedValue(GeneratedValue.UUIDGenerator.class)
-    private String id;
+    private UUID id;
 
     private Float price;
 

@@ -8,8 +8,9 @@ import org.springframework.data.neo4j.repository.query.Query;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
-public interface OrderRepository extends Neo4jRepository<Order, String> {
+public interface OrderRepository extends Neo4jRepository<Order, UUID> {
 
     @Query("MATCH (o:Order) RETURN o")
     List<Order> getAllOrders();

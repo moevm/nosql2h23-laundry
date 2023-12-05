@@ -6,6 +6,7 @@ import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Node("Product")
 @AllArgsConstructor
@@ -16,8 +17,7 @@ import java.util.Date;
 public class Product {
 
     @Id
-    @GeneratedValue(GeneratedValue.UUIDGenerator.class)
-    private String id;
+    private UUID id;
 
     private String type;
 

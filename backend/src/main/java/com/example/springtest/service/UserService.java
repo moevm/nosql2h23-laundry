@@ -8,10 +8,12 @@ import org.springframework.stereotype.Service;
 import com.example.springtest.model.Client;
 import com.example.springtest.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -19,15 +21,18 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    @Transactional
     public List<User> getAllUsers() {
         return null;
     }
 
-    public User getUserByLogin(String login) {
-        return null;
+    @Transactional
+    public Optional<User> getUserByLogin(String login) {
+        return userRepository.findByLogin(login);
     }
 
-    public User getUserById(Long id) {
+    @Transactional
+    public User getUserById(UUID id) {
         return null;
     }
 }

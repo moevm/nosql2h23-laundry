@@ -9,10 +9,7 @@ import com.example.springtest.service.BranchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @CrossOrigin
@@ -39,7 +36,7 @@ public class BranchController {
 
         List<GetAllResponse.Data> data = branchList.stream()
                 .map(branch -> GetAllResponse.Data.builder()
-                        .id(branch.getId())
+                        .id(branch.getId().toString())
                         .address(branch.getAddress())
                         .warehouse(branch.getWarehouse().getAddress())
                         .director(branch.getDirector().getFullName())
@@ -67,7 +64,7 @@ public class BranchController {
 
     @PostMapping("/api/branch/delete_list")
     public void getTotalBranchesCount(@RequestBody DeleteBranchesRequest request) {
-        branchService.deleteBranches(request.getIdList());
+        branchService.deleteBranches(request.getIdList().stream().map(UUID::fromString).toList());
     }
 
 }

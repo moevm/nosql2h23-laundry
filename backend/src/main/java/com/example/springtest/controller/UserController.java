@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
@@ -23,13 +24,8 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/getByLogin/{login}")
-    public User getUserByLogin(@PathVariable("login") String login) {
-        return userService.getUserByLogin(login);
-    }
-
     @GetMapping("/getById/{id}")
-    public User getUserById(@PathVariable("id") Long id) {
-        return userService.getUserById(id);
+    public User getUserById(@PathVariable("id") String id) {
+        return userService.getUserById(UUID.fromString(id));
     }
 }

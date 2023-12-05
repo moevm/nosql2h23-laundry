@@ -8,6 +8,7 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.UUID;
 
 @Node("Shift")
 @AllArgsConstructor
@@ -18,8 +19,7 @@ import java.util.Date;
 public class Shift {
 
     @Id
-    @GeneratedValue(GeneratedValue.UUIDGenerator.class)
-    private String id;
+    private UUID id;
 
     private LocalDateTime date;
 

@@ -8,8 +8,9 @@ import org.springframework.data.neo4j.repository.query.Query;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface UserRepository extends Neo4jRepository<User, String> {
+public interface UserRepository extends Neo4jRepository<User, UUID> {
     @Query("MATCH (u:User) RETURN u")
     List<User> getAllUsers();
 
@@ -17,6 +18,6 @@ public interface UserRepository extends Neo4jRepository<User, String> {
     Optional<User> findByLogin(String login);
 
     @Query("MATCH (u:User {id: $id}) RETURN u LIMIT 1")
-    Optional<User> findById(String id);
+    Optional<User> findById(UUID id);
 
 }

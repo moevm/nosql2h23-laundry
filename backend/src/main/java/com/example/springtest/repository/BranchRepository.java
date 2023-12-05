@@ -5,8 +5,9 @@ import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 
 import java.util.List;
+import java.util.UUID;
 
-public interface BranchRepository extends Neo4jRepository<Branch, String> {
+public interface BranchRepository extends Neo4jRepository<Branch, UUID> {
 
     @Query("MATCH (b:Branch) " +
             "OPTIONAL MATCH (b)-[:SUPPLIED_BY]->(w:Warehouse) " +
@@ -28,6 +29,6 @@ public interface BranchRepository extends Neo4jRepository<Branch, String> {
     @Query("MATCH (b:Branch) " +
             "WHERE b.id in $idList " +
             "DETACH DELETE b")
-    void deleteBranches(List<String> idList);
+    void deleteBranches(List<UUID> idList);
 
 }

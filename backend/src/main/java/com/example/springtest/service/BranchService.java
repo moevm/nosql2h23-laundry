@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Service
@@ -76,7 +77,8 @@ public class BranchService {
         return (int) Math.ceil(repository.getTotalCount(addressFilter, warehouseFilter, directorFilter) / (double) request.getElementsOnPage());
     }
 
-    public void deleteBranches(List<String> idList) {
+    @Transactional
+    public void deleteBranches(List<UUID> idList) {
         repository.deleteBranches(idList);
     }
 }
