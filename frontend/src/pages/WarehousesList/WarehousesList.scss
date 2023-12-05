@@ -1,0 +1,105 @@
+#warehouses-list-wrapper {
+  display: flex;
+  flex-direction: column;
+
+  height: 100vh;
+
+  background: linear-gradient(180deg, #CFF4FC 30.32%, #FFF 81.32%);
+
+
+  #content-wrapper {
+
+    display: flex;
+    flex-direction: row;
+
+    padding: 60px 170px;
+
+    justify-content: center;
+    align-items: center;
+
+    flex: 1 0 0;
+
+    #window {
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+
+      flex: 1 0 0;
+
+      min-width: 800px;
+
+      padding: 20px 40px;
+
+      border-radius: 25px;
+      background: #c6f2ae;
+
+      #controls {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        width: 100%;
+
+        #controls-1 {
+          display: flex;
+          flex-direction: row;
+          justify-content: right;
+          align-items: center;
+          gap: 25px;
+
+          flex: 1 0 0;
+
+          #plus-button {
+            border-radius: 50px;
+            padding: 0;
+          }
+
+          #trash-button {
+            border-radius: 50px;
+            padding: 5px;
+          }
+
+          .pagination {
+            margin: 0;
+          }
+          .form-select {
+            width: auto;
+          }
+        }
+
+      }
+
+      #table {
+        margin-bottom: 0;
+
+
+        th {
+
+          vertical-align: middle;
+
+          & > div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+
+          .sort-filter {
+            display: flex;
+            gap: 7px;
+            align-items: center;
+          }
+
+          &:first-child {
+            width: 30px;
+          }
+
+          &:last-child {
+            width: 95px;
+          }
+        }
+      }
+    }
+  }
+}
