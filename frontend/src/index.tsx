@@ -13,6 +13,8 @@ import {NotFound} from "./pages/NotFound/NotFound";
 import {SignIn} from "./pages/SignIn/SignIn";
 import {SignUp} from "./pages/SignUp/SignUp";
 import {MainPage} from "./pages/MainPage/MainPage";
+import {OrdersList} from "./pages/OrdersList/OrdersList";
+
 import {Provider} from "react-redux";
 import store from "./store";
 
@@ -33,6 +35,10 @@ const router = createBrowserRouter([
     {
         path: "/main_page",
         element: <MainPage/>
+    },
+    {
+        path: "/orders-list",
+        element: <OrdersList/>
     }
 ]);
 
