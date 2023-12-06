@@ -1,14 +1,22 @@
 import "./NewClient.scss";
 import Header from "../../components/Header/Header";
-import {EmojiSmileUpsideDown} from "react-bootstrap-icons";
-import {Button, Col, Form, Row} from "react-bootstrap";
+import {Alert, Button, Col, Form} from "react-bootstrap";
 import {useAppDispatch, useAppSelector} from "../../hooks";
 import {useCookies} from "react-cookie";
 import {setUser} from "../../features/auth/authSlice";
-import {Navigate} from "react-router-dom";
-import {useRef} from "react";
+import {Navigate, useNavigate} from "react-router-dom";
+import React, {useRef, useState} from "react";
+import axios, {HttpStatusCode} from "axios";
+import {ExclamationTriangle} from "react-bootstrap-icons";
 
 export function NewClient() {
+    const navigate = useNavigate();
+
+    let [isAlertShown, setAlertShown] = useState(false);
+    let [isAlert1Shown, setAlert1Shown] = useState(false);
+    let [isAlert2Shown, setAlert2Shown] = useState(false);
+
+
     let weekArray = [
         "Понедельник",
         "Вторник",
@@ -47,8 +55,48 @@ export function NewClient() {
     }
 
 
-    function submitCreation() {
+    function createAlert(setAlertShown: React.Dispatch<React.SetStateAction<boolean>>) {
+        setAlertShown(true);
+        setTimeout(() => {
+            setAlertShown(false);
+        }, 3000);
+    }
 
+    async function submitCreation() {
+
+        if ((loginRef.current !== null && loginRef.current.value === "") ||
+            (passwordRef.current !== null && passwordRef.current.value === "") ||
+            (repeatPasswordRef.current !== null && repeatPasswordRef.current.value === "") ||
+            (credsRef.current !== null && credsRef.current.value === "") ||
+            (emailRef.current !== null && emailRef.current.value === "")
+        ) {
+            createAlert(setAlertShown);
+            return;
+        }
+
+        if (passwordRef.current!.value !== repeatPasswordRef.current!.value) {
+            createAlert(setAlert1Shown);
+            return;
+        }
+
+        // Create new branch
+        await axios.post("/api/client/create", {
+            login: loginRef.current!.value,
+            password: passwordRef.current!.value,
+            name: credsRef.current!.value,
+            email: emailRef.current!.value
+        }, {
+            baseURL: "http://localhost:8080"
+        }).then(() => {
+            navigate("/clients-list");
+        }).catch((error) => {
+
+            if (error.response.status === HttpStatusCode.BadRequest) {
+                createAlert(setAlert2Shown)
+            } else {
+                console.log(error)
+            }
+        })
     }
 
     return (
@@ -61,7 +109,12 @@ export function NewClient() {
                     <Form>
                         <div>
                             <Form.Label>
-                                Логин
+                                <div>
+                                    Логин
+                                </div>
+                                <div className="star">
+                                    *
+                                </div>
                             </Form.Label>
                             <Col>
                                 <Form.Control placeholder="Введите логин"
@@ -72,10 +125,15 @@ export function NewClient() {
 
                         <div>
                             <Form.Label>
-                                Пароль
+                                <div>
+                                    Пароль
+                                </div>
+                                <div className="star">
+                                    *
+                                </div>
                             </Form.Label>
                             <Col>
-                                <Form.Control placeholder="Введите пароль"
+                                <Form.Control type="password" placeholder="Введите пароль"
                                               ref={passwordRef}
                                 />
                             </Col>
@@ -83,10 +141,15 @@ export function NewClient() {
 
                         <div>
                             <Form.Label>
-                                Повторить пароль
+                                <div>
+                                    Повторить пароль
+                                </div>
+                                <div className="star">
+                                    *
+                                </div>
                             </Form.Label>
                             <Col>
-                                <Form.Control placeholder="Повторить пароль"
+                                <Form.Control type="password" placeholder="Повторить пароль"
                                               ref={repeatPasswordRef}
                                 />
                             </Col>
@@ -94,7 +157,12 @@ export function NewClient() {
 
                         <div>
                             <Form.Label>
-                                ФИО
+                                <div>
+                                    ФИО
+                                </div>
+                                <div className="star">
+                                    *
+                                </div>
                             </Form.Label>
                             <Col>
                                 <Form.Control placeholder="Введите ФИО"
@@ -105,7 +173,12 @@ export function NewClient() {
 
                         <div>
                             <Form.Label>
-                                Email
+                                <div>
+                                    Email
+                                </div>
+                                <div className="star">
+                                    *
+                                </div>
                             </Form.Label>
                             <Col>
                                 <Form.Control placeholder="Введите email"
@@ -117,10 +190,22 @@ export function NewClient() {
 
                         <div className="buttons">
                             <Button onClick={() => submitCreation()}>Создать</Button>
-                            <Button>Отмена</Button>
+                            <Button onClick={() => navigate(-1)}>Отмена</Button>
                         </div>
                     </Form>
                 </div>
+                <Alert className="custom-alert" variant="danger" show={isAlertShown}>
+                    <ExclamationTriangle/>
+                    <>Вы не заполнили все обязательные поля!</>
+                </Alert>
+                <Alert className="custom-alert" variant="danger" show={isAlert1Shown}>
+                    <ExclamationTriangle/>
+                    <>Пароли не совпадают!</>
+                </Alert>
+                <Alert className="custom-alert" variant="danger" show={isAlert2Shown}>
+                    <ExclamationTriangle/>
+                    <>Клиент с таким же логином уже существует!</>
+                </Alert>
             </div>
 
         </div>

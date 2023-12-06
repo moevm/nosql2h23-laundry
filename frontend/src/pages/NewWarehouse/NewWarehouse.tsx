@@ -124,7 +124,7 @@ export function NewWarehouse() {
         },{
             baseURL: "http://localhost:8080"
         }).then(() => {
-            navigate("/branches-list");
+            navigate("/warehouses-list");
         }).catch((error) => {
 
             if (error.response.status === HttpStatusCode.BadRequest) {

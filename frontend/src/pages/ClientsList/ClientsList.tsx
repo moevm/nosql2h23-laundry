@@ -9,14 +9,54 @@ import {useAppDispatch, useAppSelector} from "../../hooks";
 import {useCookies} from "react-cookie";
 import {setUser} from "../../features/auth/authSlice";
 import {Link, Navigate, useNavigate, useSearchParams} from "react-router-dom";
+import axios from "axios";
 
 type TableData = {
-    id: number,
+    id: string,
     name: string,
     email: string
 }
 
 export function ClientsList() {
+
+    const navigate = useNavigate();
+
+
+    const [tableData, setTableData] = useState<TableData[]>([]);
+    const [isInitialized, setInitialized] = useState(false);
+
+    async function loadData() {
+        await axios.get("/api/client/all_count", {
+            baseURL: "http://localhost:8080",
+            params: {
+                name: nameFilter,
+                email: emailFilter,
+                elementsOnPage: elementsOnPage
+            }
+        }).then(async (response) => {
+
+            setTotalPages(parseInt(response.data))
+
+            await axios.get("/api/client/all",{
+                baseURL: "http://localhost:8080",
+                params: {
+                    name: nameFilter,
+                    email: emailFilter,
+                    elementsOnPage: elementsOnPage,
+                    page: currentPage
+                }
+            }).then((response) => {
+                let data: TableData[] = response.data.data;
+
+                setTableData(data);
+            }).catch((error) => {
+                console.log(error)
+            })
+
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
 
     function createPaginationElements(): JSX.Element[] {
         const pagesShown: number = 5;
@@ -71,14 +111,16 @@ export function ClientsList() {
             );
         }
 
-        items.push(
-            <Pagination.Item key={totalPages} active={currentPage === totalPages} onClick={() => {
-                if (currentPage !== totalPages)
-                    setCurrentPage(totalPages)
-            }}>
-                {totalPages}
-            </Pagination.Item>
-        );
+        if (totalPages > 1) {
+            items.push(
+                <Pagination.Item key={totalPages} active={currentPage === totalPages} onClick={() => {
+                    if (currentPage !== totalPages)
+                        setCurrentPage(totalPages)
+                }}>
+                    {totalPages}
+                </Pagination.Item>
+            );
+        }
 
         return items;
     }
@@ -126,52 +168,18 @@ export function ClientsList() {
         }
     }
 
-    let tableData: TableData[] = [
-        {
-            id: 1235,
-            name: "Иванов Иван Иванович",
-            email: "kratos@olimpus.god"
-        },
-        {
-            id: 4528,
-            name: "Атрей Локиевич",
-            email: "boy@son.semigod"
-        },
-        {
-            id: 6532,
-            name: "Атрей Локиевич",
-            email: "boy@son.semigod"
-        },
-        {
-            id: 34682,
-            name: "Атрей Локиевич",
-            email: "boy@son.semigod"
-        },
-        {
-            id: 345729,
-            name: "Атрей Локиевич",
-            email: "boy@son.semigod"
-        },
-        {
-            id: 6468,
-            name: "Атрей Локиевич",
-            email: "boy@son.semigod"
-        },
-        {
-            id: 192974,
-            name: "Атрей Локиевич",
-            email: "boy@son.semigod"
-        }
-    ];
-
     let [currentPage, setCurrentPage] = useState(1);
     let [totalPages, setTotalPages] = useState(10);
     let [elementsOnPage, setElementsOnPage] = useState(10);
 
+
+    useEffect(() => {
+        if (isInitialized) {
+            loadData();
+        }
+    }, [currentPage, elementsOnPage]);
+
     let [searchParams, setSearchParams] = useSearchParams();
-    const navigate = useNavigate();
-
-
     const [sortState, setSortState] = useState("state_down");
 
     function initNameFilter() {
@@ -199,7 +207,7 @@ export function ClientsList() {
     const mainCheckRef = useRef<HTMLInputElement>(null);
     const checkboxesRef = useRef<{
         element: HTMLInputElement,
-        id: number
+        id: string
     }[]>([]);
     const [anyChecked, setAnyChecked] = useState(false);
 
@@ -238,13 +246,19 @@ export function ClientsList() {
             }
         }
 
+        if (isInitialized) {
+            console.log("2")
+            loadData();
+        }
+
     }, [nameFilter, emailFilter]);
 
     useEffect(() => {
-        // TODO: call backend for new data
-        console.log("New Data")
-
-    }, [currentPage, elementsOnPage]);
+        if (!isInitialized) {
+            setInitialized(true);
+        }
+        loadData();
+    }, []);
 
     if (!auth.authorized) {
         if (cookies["auth"] !== undefined) {
@@ -265,9 +279,9 @@ export function ClientsList() {
 
 
 
-    function deleteChecked() {
+    async function deleteChecked() {
 
-        let idsToDelete: number[] = [];
+        let idsToDelete: string[] = [];
 
         for (const checkbox of checkboxesRef.current) {
             if (checkbox.element.checked) {
@@ -275,8 +289,15 @@ export function ClientsList() {
             }
         }
 
-        console.log(idsToDelete)
-        // TODO: add messaging with backend
+        await axios.post("/api/client/delete_list", {
+            idList: idsToDelete
+        },{
+            baseURL: "http://localhost:8080"
+        }).then(() => {
+            loadData();
+        }).catch((error) => {
+            console.log(error)
+        })
 
         setConfirmShown(false)
     }
@@ -306,8 +327,6 @@ export function ClientsList() {
                                 let value: number = parseInt(event.target.value);
 
                                 setElementsOnPage(value)
-
-                                // TODO: call backend for new total
 
                                 setTotalPages(15)
                                 setCurrentPage(1)
