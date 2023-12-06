@@ -16,7 +16,9 @@ import java.util.UUID;
 @Repository
 public interface ClientRepository extends Neo4jRepository<Client, UUID> {
 
-    @Query("MATCH (c:Client) RETURN c")
+    @Query("MATCH (c:Client) " +
+            "OPTIONAL MATCH (c)<-[ord:ORDERED_BY]-(orders:Order) " +
+            "RETURN c, collect(ord), collect(orders)")
     List<Client> getAllClients();
 
     // TODO: Has double tag been written correctly?
@@ -24,10 +26,16 @@ public interface ClientRepository extends Neo4jRepository<Client, UUID> {
     Client addClient(UUID id, UserRole role, String login, String password, String fullName, String email, LocalDateTime creationDate, LocalDateTime editDate);
 
 
-    @Query("MATCH (c:Client {login: $login}) RETURN c LIMIT 1")
+    @Query("MATCH (c:Client {login: $login}) " +
+            "OPTIONAL MATCH (c)<-[ord:ORDERED_BY]-(orders:Order) " +
+            "RETURN c, collect(ord), collect(orders) " +
+            "LIMIT 1")
     Optional<Client> findByLogin(String login);
 
-    @Query("MATCH (c:Client {id: $id}) RETURN c LIMIT 1")
+    @Query("MATCH (c:Client {id: $id}) " +
+            "OPTIONAL MATCH (c)<-[ord:ORDERED_BY]-(orders:Order) " +
+            "RETURN c, collect(ord), collect(orders) " +
+            "LIMIT 1")
     Optional<Client> findById(UUID id);
 
 }

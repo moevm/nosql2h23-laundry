@@ -19,7 +19,18 @@ public interface EmployeeRepository extends Neo4jRepository<Employee, UUID> {
     @Query("CREATE (e:Employee:User {id: $id, role: $role, login: $login, password: $password, fullName: $fullName, email: $email, phone: $phone, schedule: $schedule, creationDate: $creationDate, editDate: $editDate}) RETURN e")
     Employee addEmployee(UUID id, UserRole role, String login, String password, String fullName, String email, String phone, List<String> schedule, LocalDateTime creationDate, LocalDateTime editDate);
 
-    @Query("MATCH (c:Employee {login: $login}) RETURN c LIMIT 1")
+    @Query("MATCH (e:Employee {login: $login}) " +
+            "OPTIONAL MATCH (e)-[ad:ADMINISTERS]->(b:Branch) " +
+            "OPTIONAL MATCH (e)-[man:MANAGE]->(w:Warehouse) " +
+            "OPTIONAL MATCH (e)<-[op:OPENED_BY]-(sh:Shift) " +
+            "OPTIONAL MATCH (e)<-[rec:RECEIVED_BY]-(sal:Salary) " +
+            "RETURN e, ad, b, man, w, collect(op), collect(sh), collect(rec), collect(sal)" +
+            "LIMIT 1")
     Optional<Employee> findByLogin(String login);
 
+    // Mapping everything here is not necessary
+    @Query("MATCH (e:Employee {role: $userRole}) " +
+            "WHERE NOT (e)-[:MANAGE]->(b:Branch) " +
+            "RETURN e")
+    List<Employee> findEmployeeWithoutBranch(UserRole userRole);
 }

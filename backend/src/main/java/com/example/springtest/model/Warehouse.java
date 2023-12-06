@@ -31,12 +31,12 @@ public class Warehouse {
     private LocalDateTime editDate;
 
     @Relationship(type = "STORE", direction = Relationship.Direction.OUTGOING)
-    private Product product;
+    private List<Product> product;
 
-    @Relationship(type = "STORE", direction = Relationship.Direction.OUTGOING)
-    private Employee employee;
+    @Relationship(type = "SUPPLIED_BY", direction = Relationship.Direction.INCOMING)
+    private Branch branch;
 
     @Relationship(type = "MANAGE", direction = Relationship.Direction.INCOMING)
-    private User user;
+    private Employee director;
 
 }

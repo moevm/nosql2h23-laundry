@@ -12,7 +12,7 @@ import java.util.UUID;
 @Node("Employee")
 @Getter
 @Setter
-@ToString(callSuper = true)
+//@ToString(callSuper = true)
 public class Employee extends User {
 
     private String phone;

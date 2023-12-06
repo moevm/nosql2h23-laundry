@@ -1,9 +1,6 @@
 package com.example.springtest.controller;
 
-import com.example.springtest.dto.branch.DeleteBranchesRequest;
-import com.example.springtest.dto.branch.GetAllRequest;
-import com.example.springtest.dto.branch.GetAllResponse;
-import com.example.springtest.dto.branch.GetTotalBranchesCountRequest;
+import com.example.springtest.dto.branch.*;
 import com.example.springtest.model.Branch;
 import com.example.springtest.service.BranchService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +14,11 @@ import java.util.*;
 public class BranchController {
 
     private final BranchService branchService;
+
+    @PostMapping("/api/branch/create")
+    public void createBranch(@RequestBody CreateBranchRequest request) {
+        branchService.createBranch(request);
+    }
 
     @GetMapping("/api/branch/all")
     public GetAllResponse getAllBranches(
@@ -33,6 +35,8 @@ public class BranchController {
                 .elementsOnPage(elementsOnPage)
                 .page(page)
                 .build());
+
+        System.out.println(branchList.toString());
 
         List<GetAllResponse.Data> data = branchList.stream()
                 .map(branch -> GetAllResponse.Data.builder()

@@ -1,10 +1,15 @@
 package com.example.springtest;
 
+import com.example.springtest.dto.branch.CreateBranchRequest;
+import com.example.springtest.dto.branch.GetAllRequest;
+import com.example.springtest.dto.branch.GetTotalBranchesCountRequest;
 import com.example.springtest.dto.clientService.NewClientData;
 import com.example.springtest.dto.employeeService.NewEmployeeData;
+import com.example.springtest.model.Branch;
 import com.example.springtest.model.Employee;
 import com.example.springtest.model.User;
 import com.example.springtest.model.types.UserRole;
+import com.example.springtest.service.BranchService;
 import com.example.springtest.service.ClientService;
 import com.example.springtest.service.EmployeeService;
 import com.example.springtest.service.UserService;
@@ -23,8 +28,6 @@ public class SpringTestApplication {
 
         ClientService clientService = context.getBean(ClientService.class);
         EmployeeService employeeService = context.getBean(EmployeeService.class);
-
-        UserService userService = context.getBean(UserService.class);
 
         try {
             clientService.addClient(NewClientData.builder()
@@ -74,6 +77,23 @@ public class SpringTestApplication {
                     .build());
         } catch (Exception ignored) {
         }
+
+        BranchService branchService = context.getBean(BranchService.class);
+
+        try {
+            Employee admin = employeeService.findEmployeeByLogin("Admin").get();
+            Employee director = employeeService.findEmployeeByLogin("Director").get();
+
+            Branch branch = branchService.createBranch(CreateBranchRequest.builder()
+                    .address("Address")
+                    .directorName(director.getFullName())
+                    .adminName(admin.getFullName())
+                    .warehouseAddress("")
+                    .build());
+
+        } catch (Exception ignored) {
+        }
+
 
     }
 

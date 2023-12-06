@@ -16,6 +16,7 @@ import java.util.UUID;
 @Builder
 @Getter
 @Setter
+@ToString
 public class Branch {
 
     @Id

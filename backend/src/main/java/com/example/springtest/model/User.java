@@ -17,7 +17,7 @@ import java.util.UUID;
 @Builder
 @Getter
 @Setter
-@ToString
+//@ToString
 public class User {
 
     @Id
