@@ -12,7 +12,7 @@ public interface WarehouseRepository extends Neo4jRepository<Warehouse, UUID> {
 
     // Mapping everything here is not necessary
     @Query("MATCH (w:Warehouse) " +
-            "WHERE NOT (w)<-[:SUPPLIED_BY]-(b:Branch) " +
+            "WHERE NOT (w)<-[:SUPPLIED_BY]-() " +
             "RETURN w")
     List<Warehouse> findWarehousesWithoutBranch();
 

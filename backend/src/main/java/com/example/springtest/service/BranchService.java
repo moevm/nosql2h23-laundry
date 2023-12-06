@@ -32,13 +32,45 @@ public class BranchService {
     @Transactional
     public List<Branch> getAllBranches(GetAllRequest request) {
 
-        return branchRepository.getAllBranches(request.getAddress(), request.getWarehouse(), request.getDirector(), request.getElementsOnPage(), request.getElementsOnPage() * (request.getPage() - 1));
+        List<Branch> branches = branchRepository.getAllBranches(request.getAddress(), request.getWarehouse(), request.getDirector(), request.getElementsOnPage(), request.getElementsOnPage() * (request.getPage() - 1));
+
+        branches.removeIf((branch) -> {
+            if (request.getWarehouse().isEmpty()) {
+                return false;
+            }
+
+            if (branch.getWarehouse() != null) {
+                String address = branch.getWarehouse().getAddress();
+
+                return !address.contains(request.getWarehouse());
+            }
+
+            return true;
+        });
+
+        return branches;
     }
 
     @Transactional
     public long getTotalCount(GetTotalBranchesCountRequest request) {
 
-        long count = branchRepository.getTotalCount(request.getAddress(), request.getWarehouse(), request.getDirector());
+        List<Branch> branches = branchRepository.getTotalCount(request.getAddress(), request.getWarehouse(), request.getDirector());
+
+        branches.removeIf((branch) -> {
+            if (request.getWarehouse().isEmpty()) {
+                return false;
+            }
+
+            if (branch.getWarehouse() != null) {
+                String address = branch.getWarehouse().getAddress();
+
+                return !address.contains(request.getWarehouse());
+            }
+
+            return true;
+        });
+
+        int count = branches.size();
 
         return (int) (Math.ceil(count / (double) request.getElementsOnPage()));
     }
@@ -68,8 +100,6 @@ public class BranchService {
 
             branchRepository.connectBranchWithWarehouse(createdBranch.getId(), warehouse.get().getId());
         }
-
-        System.out.println(createdBranch.getAdmin());
 
         return createdBranch;
     }

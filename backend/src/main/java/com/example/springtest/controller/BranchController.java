@@ -36,13 +36,11 @@ public class BranchController {
                 .page(page)
                 .build());
 
-        System.out.println(branchList.toString());
-
         List<GetAllResponse.Data> data = branchList.stream()
                 .map(branch -> GetAllResponse.Data.builder()
                         .id(branch.getId().toString())
                         .address(branch.getAddress())
-                        .warehouse(branch.getWarehouse().getAddress())
+                        .warehouse((branch.getWarehouse() != null) ? branch.getWarehouse().getAddress() : "null")
                         .director(branch.getDirector().getFullName())
                         .build()
                 ).toList();

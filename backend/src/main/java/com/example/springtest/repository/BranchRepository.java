@@ -14,8 +14,8 @@ public interface BranchRepository extends Neo4jRepository<Branch, UUID> {
     @Query("MATCH (b:Branch) " +
             "MATCH (b)<-[adm:ADMINISTERS]-(admin:Employee) " +
             "MATCH (b)<-[man:MANAGE]-(director:Employee) " +
+            "WHERE b.address CONTAINS $address AND director.fullName CONTAINS $director " +
             "OPTIONAL MATCH (b)-[sup:SUPPLIED_BY]->(w:Warehouse) " +
-            "WHERE b.address CONTAINS $address AND w.address CONTAINS $warehouse AND director.fullName CONTAINS $director " +
             "RETURN b, sup, w, adm, admin, man, director " +
             "SKIP $skip " +
             "LIMIT $elementsOnPage")
@@ -23,11 +23,12 @@ public interface BranchRepository extends Neo4jRepository<Branch, UUID> {
 
 
     @Query("MATCH (b:Branch) " +
-            "MATCH (b)<-[:MANAGE]-(d:Employee) " +
-            "OPTIONAL MATCH (b)-[:SUPPLIED_BY]->(w:Warehouse) " +
-            "WHERE b.address CONTAINS $address AND w.address CONTAINS $warehouse AND d.fullName CONTAINS $director " +
-            "RETURN count(b)")
-    long getTotalCount(String address, String warehouse, String director);
+            "MATCH (b)<-[adm:ADMINISTERS]-(admin:Employee) " +
+            "MATCH (b)<-[man:MANAGE]-(director:Employee) " +
+            "WHERE b.address CONTAINS $address AND director.fullName CONTAINS $director " +
+            "OPTIONAL MATCH (b)-[sup:SUPPLIED_BY]->(w:Warehouse) " +
+            "RETURN b, sup, w, adm, admin, man, director")
+    List<Branch> getTotalCount(String address, String warehouse, String director);
 
     @Query("MATCH (b:Branch) " +
             "WHERE b.id in $idList " +

@@ -66,7 +66,12 @@ public class EmployeeService {
     }
 
     @Transactional
-    public List<Employee> findEmployeeWithoutBranch(UserRole userRole) {
-        return employeeRepository.findEmployeeWithoutBranch(userRole);
+    public List<Employee> findDirectorWithoutBranch() {
+        return employeeRepository.findDirectorWithoutBranch();
+    }
+
+    @Transactional
+    public List<Employee> findAdminWithoutBranch() {
+        return employeeRepository.findAdminWithoutBranch();
     }
 }

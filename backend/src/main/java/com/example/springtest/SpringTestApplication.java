@@ -94,6 +94,16 @@ public class SpringTestApplication {
         } catch (Exception ignored) {
         }
 
+        List<Branch> branches = branchService.getAllBranches(GetAllRequest.builder()
+                        .director("")
+                        .warehouse("")
+                        .address("POP")
+                        .elementsOnPage(10)
+                        .page(1)
+                .build());
+
+        System.out.println(branches.toString());
+
 
     }
 

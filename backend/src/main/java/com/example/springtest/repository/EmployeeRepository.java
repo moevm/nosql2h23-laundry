@@ -28,9 +28,14 @@ public interface EmployeeRepository extends Neo4jRepository<Employee, UUID> {
             "LIMIT 1")
     Optional<Employee> findByLogin(String login);
 
-    // Mapping everything here is not necessary
-    @Query("MATCH (e:Employee {role: $userRole}) " +
-            "WHERE NOT (e)-[:MANAGE]->(b:Branch) " +
+
+    @Query("MATCH (e:Employee {role: 'DIRECTOR'}) " +
+            "WHERE NOT (e)-[:MANAGE]->() " +
             "RETURN e")
-    List<Employee> findEmployeeWithoutBranch(UserRole userRole);
+    List<Employee> findDirectorWithoutBranch();
+
+    @Query("MATCH (e:Employee {role: 'ADMIN'}) " +
+            "WHERE NOT (e)-[:ADMINISTERS]->() " +
+            "RETURN e")
+    List<Employee> findAdminWithoutBranch();
 }

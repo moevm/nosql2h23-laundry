@@ -21,7 +21,7 @@ public class EmployeeController {
 
     @GetMapping("api/employee/get_directors_no_branch")
     public GetDirectorsWithoutBranchResponse getDirectorsWithoutBranch() {
-        List<Employee> directors = employeeService.findEmployeeWithoutBranch(UserRole.DIRECTOR);
+        List<Employee> directors = employeeService.findDirectorWithoutBranch();
 
         return GetDirectorsWithoutBranchResponse.builder()
                 .names(directors.stream().map(User::getFullName).toList())
@@ -30,7 +30,7 @@ public class EmployeeController {
 
     @GetMapping("api/employee/get_admins_no_branch")
     public GetDirectorsWithoutBranchResponse getAdminsWithoutBranch() {
-        List<Employee> admins = employeeService.findEmployeeWithoutBranch(UserRole.ADMIN);
+        List<Employee> admins = employeeService.findAdminWithoutBranch();
 
         return GetDirectorsWithoutBranchResponse.builder()
                 .names(admins.stream().map(User::getFullName).toList())
