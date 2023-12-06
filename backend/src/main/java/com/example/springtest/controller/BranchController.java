@@ -1,7 +1,9 @@
 package com.example.springtest.controller;
 
 import com.example.springtest.dto.branch.*;
+import com.example.springtest.dto.employee.GetDirectorsWithoutBranchResponse;
 import com.example.springtest.model.Branch;
+import com.example.springtest.model.Warehouse;
 import com.example.springtest.service.BranchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,17 @@ import java.util.*;
 public class BranchController {
 
     private final BranchService branchService;
+
+    @GetMapping("api/branch/get_branches_without_warehouse")
+    public GetDirectorsWithoutBranchResponse getWarehousesWithoutBranch() {
+
+        List<Branch> branches = branchService.findBranchesWithoutWarehouse();
+
+        return GetDirectorsWithoutBranchResponse.builder().names(
+                branches.stream().map(Branch::getAddress).toList()
+        ).build();
+
+    }
 
     @PostMapping("/api/branch/create")
     public void createBranch(@RequestBody CreateBranchRequest request) {
@@ -65,7 +78,7 @@ public class BranchController {
     }
 
     @PostMapping("/api/branch/delete_list")
-    public void getTotalBranchesCount(@RequestBody DeleteBranchesRequest request) {
+    public void deleteBranches(@RequestBody DeleteBranchesRequest request) {
         branchService.deleteBranches(request.getIdList().stream().map(UUID::fromString).toList());
     }
 

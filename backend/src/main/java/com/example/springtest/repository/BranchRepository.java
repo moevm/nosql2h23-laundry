@@ -30,6 +30,7 @@ public interface BranchRepository extends Neo4jRepository<Branch, UUID> {
             "RETURN b, sup, w, adm, admin, man, director")
     List<Branch> getTotalCount(String address, String warehouse, String director);
 
+    // TODO: delete warehouse also
     @Query("MATCH (b:Branch) " +
             "WHERE b.id in $idList " +
             "DETACH DELETE b")
@@ -53,4 +54,9 @@ public interface BranchRepository extends Neo4jRepository<Branch, UUID> {
             "MATCH (b)<-[man:MANAGE]-(director:Employee) " +
             "RETURN b, collect(ex), collect(orders), sup, w, adm, admin, man, director")
     Optional<Branch> findByAddress(String address);
+
+    @Query("MATCH (b:Branch) " +
+            "WHERE NOT (b)-[:SUPPLIED_BY]->() " +
+            "RETURN b")
+    List<Branch> findBranchesWithoutWarehouse();
 }

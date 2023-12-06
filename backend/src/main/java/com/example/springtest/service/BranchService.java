@@ -103,4 +103,9 @@ public class BranchService {
 
         return createdBranch;
     }
+
+    @Transactional
+    public List<Branch> findBranchesWithoutWarehouse() {
+        return branchRepository.findBranchesWithoutWarehouse();
+    }
 }
