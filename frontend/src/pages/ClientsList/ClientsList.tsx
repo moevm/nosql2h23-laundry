@@ -328,7 +328,6 @@ export function ClientsList() {
 
                                 setElementsOnPage(value)
 
-                                setTotalPages(15)
                                 setCurrentPage(1)
                             }}>
                                 <option value="10" key={10}>10 / page</option>

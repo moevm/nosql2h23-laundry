@@ -12,7 +12,7 @@
     display: flex;
     flex-direction: row;
 
-    padding: 30px 250px;
+    padding: 30px 100px;
 
     justify-content: center;
     align-items: center;
@@ -26,7 +26,7 @@
       align-items: center;
       gap: 20px;
 
-      flex: 1 0 0;
+      //flex: 1 0 0;
 
       min-width: 820px;
 
@@ -42,6 +42,16 @@
         flex-direction: column;
         gap: 40px;
 
+        .form-label {
+          display: flex;
+          flex-direction: row;
+          gap: 10px;
+
+          .star {
+            color: red;
+          }
+        }
+
         #inputs {
           display: flex;
           flex-direction: row;
@@ -49,10 +59,20 @@
 
           #else-data {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            flex-direction: row;
+            gap: 20px;
 
             flex: 1 0 0;
+
+            min-width: 500px;
+
+            .column {
+              display: flex;
+              flex-direction: column;
+              gap: 10px;
+
+              flex: 1 0 0;
+            }
           }
         }
 
@@ -92,6 +112,16 @@
           gap: 50px;
         }
       }
+    }
+
+    .custom-alert {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+
+
+      position: absolute;
+      bottom: 40px;
     }
   }
 }

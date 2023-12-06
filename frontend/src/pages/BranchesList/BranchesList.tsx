@@ -371,9 +371,6 @@ export function BranchesList() {
 
                                 setElementsOnPage(value)
 
-                                // TODO: call backend for new total
-
-                                setTotalPages(15)
                                 setCurrentPage(1)
                             }}>
                                 <option value="10" key={10}>10 / page</option>

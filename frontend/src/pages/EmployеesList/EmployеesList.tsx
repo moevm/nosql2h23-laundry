@@ -10,15 +10,78 @@ import {useAppDispatch, useAppSelector} from "../../hooks";
 import {useCookies} from "react-cookie";
 import {setUser} from "../../features/auth/authSlice";
 import {Link, Navigate, useNavigate, useSearchParams} from "react-router-dom";
+import axios from "axios";
 
 type TableData = {
-    id: number,
+    id: string,
     name: string,
     role: string,
     phone: string
 }
 
 export function EmployeesList() {
+
+    const navigate = useNavigate();
+
+
+    const [tableData, setTableData] = useState<TableData[]>([]);
+    const [isInitialized, setInitialized] = useState(false);
+
+    async function loadData() {
+
+        let roles: string[] = []
+
+        for (const rolesKey in roleFilter) {
+            if (roleFilter[rolesKey]) {
+                let name = "";
+
+                switch (rolesKey) {
+                    case "Администратор":
+                        name = "ADMIN";
+                        break;
+                    case "Директор Филиала":
+                        name = "DIRECTOR";
+                        break;
+                    case "Владелец":
+                        name = "SUPERUSER";
+                        break;
+                }
+
+                roles.push(name);
+            }
+        }
+
+        await axios.post("/api/employee/all_count", {
+            name: nameFilter,
+            roles: roles,
+            phone: phoneFilter,
+            elementsOnPage: elementsOnPage
+        },{
+            baseURL: "http://localhost:8080",
+        }).then(async (response) => {
+
+            setTotalPages(parseInt(response.data))
+
+            await axios.post("/api/employee/all", {
+                name: nameFilter,
+                roles: roles,
+                phone: phoneFilter,
+                elementsOnPage: elementsOnPage,
+                page: currentPage
+            }, {
+                baseURL: "http://localhost:8080"
+            }).then((response) => {
+                let data: TableData[] = response.data.data;
+
+                setTableData(data);
+            }).catch((error) => {
+                console.log(error)
+            })
+
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
 
     function createPaginationElements(): JSX.Element[] {
         const pagesShown: number = 5;
@@ -73,14 +136,16 @@ export function EmployeesList() {
             );
         }
 
-        items.push(
-            <Pagination.Item key={totalPages} active={currentPage === totalPages} onClick={() => {
-                if (currentPage !== totalPages)
-                    setCurrentPage(totalPages)
-            }}>
-                {totalPages}
-            </Pagination.Item>
-        );
+        if (totalPages > 1) {
+            items.push(
+                <Pagination.Item key={totalPages} active={currentPage === totalPages} onClick={() => {
+                    if (currentPage !== totalPages)
+                        setCurrentPage(totalPages)
+                }}>
+                    {totalPages}
+                </Pagination.Item>
+            );
+        }
 
         return items;
     }
@@ -128,52 +193,17 @@ export function EmployeesList() {
         }
     }
 
-    let tableData: TableData[] = [
-        {
-            id: 1235,
-            name: "Иванов Иван Иванович",
-            role: "Администратор",
-            phone: "89312462875"
-        },
-        {
-            id: 1253,
-            name: "Могилевский Егор Владленович",
-            role: "Директор Филиала",
-            phone: "89427464774"
-        },
-        {
-            id: 4327,
-            name: "Могилевский Егор Владленович",
-            role: "Директор Филиала",
-            phone: "89427464774"
-        },
-        {
-            id: 43181,
-            name: "Могилевский Егор Владленович",
-            role: "Директор Филиала",
-            phone: "89427464774"
-        },
-        {
-            id: 34463,
-            name: "Могилевский Егор Владленович",
-            role: "Директор Филиала",
-            phone: "89427464774"
-        },
-        {
-            id: 1291,
-            name: "Могилевский Егор Владленович",
-            role: "Директор Филиала",
-            phone: "89427464774"
-        }
-    ];
-
     let [currentPage, setCurrentPage] = useState(1);
     let [totalPages, setTotalPages] = useState(10);
     let [elementsOnPage, setElementsOnPage] = useState(10);
 
+    useEffect(() => {
+        if (isInitialized) {
+            loadData();
+        }
+    }, [currentPage, elementsOnPage]);
 
     let [searchParams, setSearchParams] = useSearchParams();
-    const navigate = useNavigate();
 
     const [sortState, setSortState] = useState("state_down");
 
@@ -223,7 +253,7 @@ export function EmployeesList() {
     const mainCheckRef = useRef<HTMLInputElement>(null);
     const checkboxesRef = useRef<{
         element: HTMLInputElement,
-        id: number
+        id: string
     }[]>([]);
     const [anyChecked, setAnyChecked] = useState(false);
 
@@ -295,13 +325,18 @@ export function EmployeesList() {
             }
         }
 
+        if (isInitialized) {
+            loadData();
+        }
+
     }, [nameFilter, roleFilter, phoneFilter]);
 
     useEffect(() => {
-        // TODO: call backend for new data
-        console.log("New Data")
-
-    }, [currentPage, elementsOnPage]);
+        if (!isInitialized) {
+            setInitialized(true);
+        }
+        loadData();
+    }, []);
 
     if (!auth.authorized) {
         if (cookies["auth"] !== undefined) {
@@ -320,9 +355,9 @@ export function EmployeesList() {
         return <Navigate to="/not-found" replace={true}/>
     }
 
-    function deleteChecked() {
+    async function deleteChecked() {
 
-        let idsToDelete: number[] = [];
+        let idsToDelete: string[] = [];
 
         for (const checkbox of checkboxesRef.current) {
             if (checkbox.element.checked) {
@@ -330,8 +365,15 @@ export function EmployeesList() {
             }
         }
 
-        console.log(idsToDelete)
-        // TODO: add messaging with backend
+        await axios.post("/api/employee/delete_list", {
+            idList: idsToDelete
+        },{
+            baseURL: "http://localhost:8080"
+        }).then(() => {
+            loadData();
+        }).catch((error) => {
+            console.log(error)
+        })
 
         setConfirmShown(false)
     }
