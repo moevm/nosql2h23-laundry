@@ -1,7 +1,7 @@
 import "./BranchesList.scss";
 import Header from "../../components/Header/Header";
-import {Button, Pagination, Table, Form, Modal} from "react-bootstrap";
-import {Dot, Plus, Trash} from "react-bootstrap-icons";
+import {Button, Form, Modal, Pagination, Table} from "react-bootstrap";
+import {Plus, Trash} from "react-bootstrap-icons";
 import {JSX, useEffect, useRef, useState} from "react";
 import {TableSort} from "../../components/TableSort/TableSort";
 import {TextFilter} from "../../components/Filters/TextFilter/TextFilter";
@@ -9,7 +9,7 @@ import {useAppDispatch, useAppSelector} from "../../hooks";
 import {useCookies} from "react-cookie";
 import {setUser} from "../../features/auth/authSlice";
 import {Link, Navigate, useNavigate, useSearchParams} from "react-router-dom";
-import axios, {HttpStatusCode} from "axios";
+import axios from "axios";
 
 type TableData = {
     id: string,
@@ -48,7 +48,15 @@ export function BranchesList() {
                     page: currentPage
                 }
             }).then((response) => {
-                setTableData(response.data.data);
+                let data: TableData[] = response.data.data;
+
+                for (const dataPart of data) {
+                    if (dataPart.warehouse === "null") {
+                        dataPart.warehouse = "Склад отсутствует"
+                    }
+                }
+
+                setTableData(data);
             }).catch((error) => {
                 console.log(error)
             })
@@ -111,20 +119,23 @@ export function BranchesList() {
             );
         }
 
-        items.push(
-            <Pagination.Item key={totalPages} active={currentPage === totalPages} onClick={() => {
-                if (currentPage !== totalPages)
-                    setCurrentPage(totalPages)
-            }}>
-                {totalPages}
-            </Pagination.Item>
-        );
+        if (totalPages > 1) {
+            items.push(
+                <Pagination.Item key={totalPages} active={currentPage === totalPages} onClick={() => {
+                    if (currentPage !== totalPages)
+                        setCurrentPage(totalPages)
+                }}>
+                    {totalPages}
+                </Pagination.Item>
+            );
+        }
+
 
         return items;
     }
 
     let [currentPage, setCurrentPage] = useState(1);
-    let [totalPages, setTotalPages] = useState(10);
+    let [totalPages, setTotalPages] = useState(1);
     let [elementsOnPage, setElementsOnPage] = useState(10);
 
     useEffect(() => {
@@ -329,6 +340,7 @@ export function BranchesList() {
         setConfirmShown(false)
     }
 
+    // TODO: Implement sort
     return (
         <div id="branches-list-wrapper">
             <Header title="Филиалы"/>

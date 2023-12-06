@@ -42,6 +42,16 @@
         flex-direction: column;
         gap: 40px;
 
+        .form-label {
+          display: flex;
+          flex-direction: row;
+          gap: 10px;
+
+          .star {
+            color: red;
+          }
+        }
+
         #inputs {
           display: flex;
           flex-direction: row;
@@ -92,6 +102,16 @@
           gap: 50px;
         }
       }
+    }
+
+    #not-all-alert {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+
+
+      position: absolute;
+      bottom: 40px;
     }
   }
 }
