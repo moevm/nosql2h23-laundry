@@ -9,14 +9,50 @@ import {useAppDispatch, useAppSelector} from "../../hooks";
 import {useCookies} from "react-cookie";
 import {setUser} from "../../features/auth/authSlice";
 import {Link, Navigate, useNavigate, useSearchParams} from "react-router-dom";
+import axios from "axios";
 
 type TableData = {
-    id: number,
+    id: string,
     address: string,
     branch: string
 }
 
 export function WarehousesList() {
+
+    const [tableData, setTableData] = useState<TableData[]>([]);
+    const [isInitialized, setInitialized] = useState(false);
+
+    async function loadData() {
+        await axios.get("/api/warehouse/all_count", {
+            baseURL: "http://localhost:8080",
+            params: {
+                address: addressFilter,
+                branch: branchFilter,
+                elementsOnPage: elementsOnPage
+            }
+        }).then(async (response) => {
+
+            setTotalPages(parseInt(response.data))
+
+            await axios.get("/api/warehouse/all",{
+                baseURL: "http://localhost:8080",
+                params: {
+                    address: addressFilter,
+                    branch: branchFilter,
+                    elementsOnPage: elementsOnPage,
+                    page: currentPage
+                }
+            }).then((response) => {
+                setTableData(response.data.data);
+            }).catch((error) => {
+                console.log(error)
+            })
+
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+
 
     function createPaginationElements(): JSX.Element[] {
         const pagesShown: number = 5;
@@ -71,16 +107,130 @@ export function WarehousesList() {
             );
         }
 
-        items.push(
-            <Pagination.Item key={totalPages} active={currentPage === totalPages} onClick={() => {
-                if (currentPage !== totalPages)
-                    setCurrentPage(totalPages)
-            }}>
-                {totalPages}
-            </Pagination.Item>
-        );
+        if (totalPages > 1) {
+            items.push(
+                <Pagination.Item key={totalPages} active={currentPage === totalPages} onClick={() => {
+                    if (currentPage !== totalPages)
+                        setCurrentPage(totalPages)
+                }}>
+                    {totalPages}
+                </Pagination.Item>
+            );
+        }
+
 
         return items;
+    }
+
+    let [currentPage, setCurrentPage] = useState(1);
+    let [totalPages, setTotalPages] = useState(10);
+    let [elementsOnPage, setElementsOnPage] = useState(10);
+
+    useEffect(() => {
+        if (isInitialized) {
+            loadData();
+        }
+    }, [currentPage, elementsOnPage]);
+
+
+    let [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
+
+    const [sortState, setSortState] = useState("state_down");
+
+
+    function initAddressFilter() {
+        let string = "";
+
+        if (searchParams.has("address")) {
+            string = searchParams.get("address")!;
+        }
+
+        return string;
+    }
+    function initBranchFilter() {
+        let string = "";
+
+        if (searchParams.has("branch")) {
+            string = searchParams.get("branch")!;
+        }
+
+        return string;
+    }
+
+    const [addressFilter, setAddressFilter] = useState(initAddressFilter());
+    const [branchFilter, setBranchFilter] = useState(initBranchFilter());
+
+    const mainCheckRef = useRef<HTMLInputElement>(null);
+    const checkboxesRef = useRef<{
+        element: HTMLInputElement,
+        id: string
+    }[]>([]);
+    const [anyChecked, setAnyChecked] = useState(false);
+
+    const [confirmShown, setConfirmShown] = useState(false);
+
+    const auth = useAppSelector((state) => state.auth)
+    const dispatch = useAppDispatch()
+    const [cookies] = useCookies(['auth']);
+
+    useEffect(() => {
+        if (addressFilter !== "") {
+            if (searchParams.has("address")) {
+                searchParams.set("address", addressFilter)
+            } else {
+                searchParams.append("address", addressFilter)
+            }
+            setSearchParams(searchParams, {replace: true});
+        } else {
+            if (searchParams.has("address")) {
+                searchParams.delete("address")
+                setSearchParams(searchParams, {replace: true});
+            }
+        }
+
+        if (branchFilter !== "") {
+            if (searchParams.has("branch")) {
+                searchParams.set("branch", branchFilter)
+            } else {
+                searchParams.append("branch", branchFilter)
+            }
+            setSearchParams(searchParams, {replace: true});
+        } else {
+            if (searchParams.has("branch")) {
+                searchParams.delete("branch")
+                setSearchParams(searchParams, {replace: true});
+            }
+        }
+
+        if (isInitialized) {
+            loadData();
+        }
+
+    }, [addressFilter, branchFilter]);
+
+    useEffect(() => {
+        if (!isInitialized) {
+            setInitialized(true);
+        }
+        loadData();
+    }, []);
+
+    if (!auth.authorized) {
+        if (cookies["auth"] !== undefined) {
+            dispatch(setUser({
+                id: cookies["auth"].id,
+                login: cookies["auth"].login,
+                name: cookies["auth"].name,
+                role: cookies["auth"].role
+            }))
+        } else {
+            return <Navigate to="/sign_in" replace={true}/>;
+        }
+    }
+
+    if (auth.role !== "SUPERUSER") {
+        return <Navigate to="/not-found" replace={true}/>
     }
 
     function isAllChecked() {
@@ -126,126 +276,9 @@ export function WarehousesList() {
         }
     }
 
-    let tableData: TableData[] = [
-        {
-            id: 1235,
-            address: "38 Airport Ave. Rockville, MD 20850",
-            branch: "Москва, улица Рождественка, 20/8с16"
-        },
-        {
-            id: 2145,
-            address: "9291 Birchwood St. San Carlos, CA 94070",
-            branch: "Большой проспект П.С., 88, Санкт-Петербург, 197136"
-        },
-        {
-            id: 3674,
-            address: "34 NW. Brickyard Street Owings Mills, MD 21117",
-            branch: "Большой проспект П.С., 88, Санкт-Петербург, 197136"
-        }
-    ];
+    async function deleteChecked() {
 
-    let [currentPage, setCurrentPage] = useState(1);
-    let [totalPages, setTotalPages] = useState(10);
-    let [elementsOnPage, setElementsOnPage] = useState(10);
-
-    let [searchParams, setSearchParams] = useSearchParams();
-    const navigate = useNavigate();
-
-    const [sortState, setSortState] = useState("state_down");
-
-
-    function initAddressFilter() {
-        let string = "";
-
-        if (searchParams.has("address")) {
-            string = searchParams.get("address")!;
-        }
-
-        return string;
-    }
-    function initBranchFilter() {
-        let string = "";
-
-        if (searchParams.has("branch")) {
-            string = searchParams.get("branch")!;
-        }
-
-        return string;
-    }
-
-    const [addressFilter, setAddressFilter] = useState(initAddressFilter());
-    const [branchFilter, setBranchFilter] = useState(initBranchFilter());
-
-    const mainCheckRef = useRef<HTMLInputElement>(null);
-    const checkboxesRef = useRef<{
-        element: HTMLInputElement,
-        id: number
-    }[]>([]);
-    const [anyChecked, setAnyChecked] = useState(false);
-
-    const [confirmShown, setConfirmShown] = useState(false);
-
-    const auth = useAppSelector((state) => state.auth)
-    const dispatch = useAppDispatch()
-    const [cookies] = useCookies(['auth']);
-
-    useEffect(() => {
-        if (addressFilter !== "") {
-            if (searchParams.has("address")) {
-                searchParams.set("address", addressFilter)
-            } else {
-                searchParams.append("address", addressFilter)
-            }
-            setSearchParams(searchParams, {replace: true});
-        } else {
-            if (searchParams.has("address")) {
-                searchParams.delete("address")
-                setSearchParams(searchParams, {replace: true});
-            }
-        }
-
-        if (branchFilter !== "") {
-            if (searchParams.has("branch")) {
-                searchParams.set("branch", branchFilter)
-            } else {
-                searchParams.append("branch", branchFilter)
-            }
-            setSearchParams(searchParams, {replace: true});
-        } else {
-            if (searchParams.has("branch")) {
-                searchParams.delete("branch")
-                setSearchParams(searchParams, {replace: true});
-            }
-        }
-
-    }, [addressFilter, branchFilter]);
-
-    useEffect(() => {
-        // TODO: call backend for new data
-        console.log("New Data")
-
-    }, [currentPage, elementsOnPage]);
-
-    if (!auth.authorized) {
-        if (cookies["auth"] !== undefined) {
-            dispatch(setUser({
-                id: cookies["auth"].id,
-                login: cookies["auth"].login,
-                name: cookies["auth"].name,
-                role: cookies["auth"].role
-            }))
-        } else {
-            return <Navigate to="/sign_in" replace={true}/>;
-        }
-    }
-
-    if (auth.role !== "SUPERUSER") {
-        return <Navigate to="/not-found" replace={true}/>
-    }
-
-    function deleteChecked() {
-
-        let idsToDelete: number[] = [];
+        let idsToDelete: string[] = [];
 
         for (const checkbox of checkboxesRef.current) {
             if (checkbox.element.checked) {
@@ -253,8 +286,15 @@ export function WarehousesList() {
             }
         }
 
-        console.log(idsToDelete)
-        // TODO: add messaging with backend
+        await axios.post("/api/warehouse/delete_list", {
+            idList: idsToDelete
+        },{
+            baseURL: "http://localhost:8080"
+        }).then(() => {
+            loadData();
+        }).catch((error) => {
+            console.log(error)
+        })
 
         setConfirmShown(false)
     }

@@ -97,7 +97,6 @@ export function NewBranch() {
     }
 
     async function submitCreation() {
-        // TODO: make sure that everything is entered (Only warehouse is not required)
 
         if (directorsArray.length === 0 || adminsArray.length === 0) {
             createAlert(setAlert1Shown);
@@ -157,7 +156,6 @@ export function NewBranch() {
         })
     }
 
-    // TODO: show required star!
     return (
         <div id="new-branch-wrapper">
             <Header title="Новый филиал"/>
@@ -315,15 +313,15 @@ export function NewBranch() {
                         </div>
                     </Form>
                 </div>
-                <Alert id="not-all-alert" variant="danger" show={isAlertShown}>
+                <Alert className="custom-alert" variant="danger" show={isAlertShown}>
                     <ExclamationTriangle/>
                     <>Вы не заполнили все обязательные поля!</>
                 </Alert>
-                <Alert id="not-all-alert" variant="danger" show={isAlert1Shown}>
+                <Alert className="custom-alert" variant="danger" show={isAlert1Shown}>
                     <ExclamationTriangle/>
                     <>Минимум одно обязательно поле недоступно! Продолжение невозможно!</>
                 </Alert>
-                <Alert id="not-all-alert" variant="danger" show={isAlert2Shown}>
+                <Alert className="custom-alert" variant="danger" show={isAlert2Shown}>
                     <ExclamationTriangle/>
                     <>Филиал с данным адресом уже зарегистрирован в системе!</>
                 </Alert>

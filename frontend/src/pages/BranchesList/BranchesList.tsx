@@ -140,7 +140,6 @@ export function BranchesList() {
 
     useEffect(() => {
         if (isInitialized) {
-            console.log("1")
             loadData();
         }
     }, [currentPage, elementsOnPage]);
@@ -289,7 +288,6 @@ export function BranchesList() {
         if (!isInitialized) {
             setInitialized(true);
         }
-        console.log("3")
         loadData();
     }, []);
 
@@ -333,6 +331,8 @@ export function BranchesList() {
             idList: idsToDelete
         },{
             baseURL: "http://localhost:8080"
+        }).then(() => {
+            loadData();
         }).catch((error) => {
             console.log(error)
         })

@@ -1,14 +1,38 @@
 import "./NewWarehouse.scss";
 import Header from "../../components/Header/Header";
-import {EmojiSmileUpsideDown} from "react-bootstrap-icons";
-import {Button, Col, Form, Row} from "react-bootstrap";
+import {EmojiSmileUpsideDown, ExclamationTriangle} from "react-bootstrap-icons";
+import {Alert, Button, Col, Form, Row} from "react-bootstrap";
 import {useAppDispatch, useAppSelector} from "../../hooks";
 import {useCookies} from "react-cookie";
 import {setUser} from "../../features/auth/authSlice";
-import {Navigate} from "react-router-dom";
-import {useRef} from "react";
+import {Navigate, useNavigate} from "react-router-dom";
+import React, {useEffect, useRef, useState} from "react";
+import axios, {HttpStatusCode} from "axios";
 
 export function NewWarehouse() {
+
+    const navigate = useNavigate();
+
+    let [isAlertShown, setAlertShown] = useState(false);
+    let [isAlert1Shown, setAlert1Shown] = useState(false);
+    let [isNoBranchAlertShown, setNoBranchAlertShown] = useState(false);
+
+    let [branchesArray, setBranchesArray] = useState<string[]>([]);
+
+    async function loadAll() {
+        await axios.get("/api/branch/get_branches_without_warehouse", {
+            baseURL: "http://localhost:8080"
+        }).then(async (response) => {
+            setBranchesArray(response.data.names)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+
+    useEffect(() => {
+        loadAll();
+    }, []);
+
     let weekArray = [
         "Понедельник",
         "Вторник",
@@ -48,23 +72,69 @@ export function NewWarehouse() {
     }
 
 
-    function submitCreation() {
-        if (addressRef.current !== null) {
-            console.log("Address: " + addressRef.current.value)
+    function createAlert(setAlertShown: React.Dispatch<React.SetStateAction<boolean>>) {
+        setAlertShown(true);
+        setTimeout(() => {setAlertShown(false);}, 3000);
+    }
+
+    async function submitCreation() {
+
+        if (branchesArray.length === 0) {
+            createAlert(setNoBranchAlertShown);
+            return;
         }
 
-        if (branchRef.current !== null) {
-            console.log("Branch: " + branchRef.current.value)
+        if (addressRef.current !== null && addressRef.current.value === "") {
+            createAlert(setAlertShown);
+            return;
         }
 
-        console.log("Schedule:");
+        let anyChecked = false;
 
         for (const data of scheduleRef.current) {
-            if (data.checkbox?.checked) {
-                console.log("Start: " + data.start?.value + "; End: " + data.end?.value);
+            if (data.checkbox !== null && data.checkbox.checked) {
+                anyChecked = true;
+                break;
             }
         }
+
+        if (!anyChecked) {
+            createAlert(setAlertShown);
+            return;
+        }
+
+        let schedule: string[] = [];
+
+        for (let i = 0; i < scheduleRef.current.length; i++) {
+            let data = scheduleRef.current[i];
+
+            if (data.checkbox !== null && data.start !== null && data.end !== null &&
+                data.checkbox.checked) {
+                schedule.push(weekArray[i])
+                schedule.push(data.start.value)
+                schedule.push(data.end.value)
+            }
+        }
+
+        // Create new branch
+        await axios.post("/api/warehouse/create", {
+            address: addressRef.current!.value,
+            branchAddress: branchRef.current!.value,
+            schedule: schedule
+        },{
+            baseURL: "http://localhost:8080"
+        }).then(() => {
+            navigate("/branches-list");
+        }).catch((error) => {
+
+            if (error.response.status === HttpStatusCode.BadRequest) {
+                createAlert(setAlert1Shown)
+            } else {
+                console.log(error)
+            }
+        })
     }
+
 
     return (
         <div id="new-warehouse-wrapper">
@@ -76,7 +146,12 @@ export function NewWarehouse() {
                     <Form>
                         <div>
                             <Form.Label>
-                                Адрес
+                                <div>
+                                    Адрес
+                                </div>
+                                <div className="star">
+                                    *
+                                </div>
                             </Form.Label>
                             <Col>
                                 <Form.Control placeholder="Введите адрес склада"
@@ -86,21 +161,30 @@ export function NewWarehouse() {
                         </div>
                         <div>
                             <Form.Label>
-                                Филиал
+                                <div>
+                                    Филиал
+                                </div>
+                                <div className="star">
+                                    *
+                                </div>
                             </Form.Label>
                             <Col>
-                                <Form.Select ref={branchRef}>
-                                    <option value="123">KEK123</option>
-                                    <option value="1">KEK1</option>
-                                    <option value="2">KEK2</option>
-                                    <option value="3">KEK3</option>
+                                <Form.Select ref={branchRef} disabled={branchesArray.length === 0}>
+                                    {branchesArray.map((value) =>
+                                        <option key={value} value={value}>{value}</option>
+                                    )}
                                 </Form.Select>
                             </Col>
                         </div>
 
                         <div id="schedule">
                             <Form.Label>
-                                График работы
+                                <div>
+                                    График работы
+                                </div>
+                                <div className="star">
+                                    *
+                                </div>
                             </Form.Label>
 
 
@@ -133,13 +217,13 @@ export function NewWarehouse() {
                                                         scheduleRef.current[index].start = ref
                                                     }
                                                 }}>
-                                                    <option value="8">8:00</option>
-                                                    <option value="8.5">8:30</option>
-                                                    <option value="9">9:00</option>
-                                                    <option value="9.5">9:30</option>
-                                                    <option value="10">10:00</option>
-                                                    <option value="10.5">10:30</option>
-                                                    <option value="11">11:00</option>
+                                                    <option value="8:00">8:00</option>
+                                                    <option value="8:30">8:30</option>
+                                                    <option value="9:00">9:00</option>
+                                                    <option value="9:30">9:30</option>
+                                                    <option value="10:00">10:00</option>
+                                                    <option value="10:30">10:30</option>
+                                                    <option value="11:00">11:00</option>
                                                 </Form.Select>
                                             </div>
                                             <div>
@@ -155,13 +239,13 @@ export function NewWarehouse() {
                                                         scheduleRef.current[index].end = ref
                                                     }
                                                 }}>
-                                                    <option value="17">17:00</option>
-                                                    <option value="17.5">17:30</option>
-                                                    <option value="18">18:00</option>
-                                                    <option value="18.5">18:30</option>
-                                                    <option value="19">19:00</option>
-                                                    <option value="19.5">19:30</option>
-                                                    <option value="20">20:00</option>
+                                                    <option value="17:00">17:00</option>
+                                                    <option value="17:30">17:30</option>
+                                                    <option value="18:00">18:00</option>
+                                                    <option value="18:30">18:30</option>
+                                                    <option value="19:00">19:00</option>
+                                                    <option value="19:30">19:30</option>
+                                                    <option value="20:00">20:00</option>
                                                 </Form.Select>
                                             </div>
                                         </div>
@@ -174,10 +258,22 @@ export function NewWarehouse() {
 
                         <div className="buttons">
                             <Button onClick={() => submitCreation()}>Создать</Button>
-                            <Button>Отмена</Button>
+                            <Button onClick={() => navigate(-1)}>Отмена</Button>
                         </div>
                     </Form>
                 </div>
+                <Alert id="not-all-alert" variant="danger" show={isAlertShown}>
+                    <ExclamationTriangle/>
+                    <>Вы не заполнили все обязательные поля!</>
+                </Alert>
+                <Alert id="not-all-alert" variant="danger" show={isAlert1Shown}>
+                    <ExclamationTriangle/>
+                    <>Склад с данным адресом уже зарегистрирован в системе!</>
+                </Alert>
+                <Alert id="not-all-alert" variant="danger" show={isNoBranchAlertShown}>
+                    <ExclamationTriangle/>
+                    <>Не найдено свободных складов. Продолжение невозможно!</>
+                </Alert>
             </div>
 
         </div>

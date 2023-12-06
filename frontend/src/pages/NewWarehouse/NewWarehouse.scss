@@ -42,6 +42,16 @@
         flex-direction: column;
         gap: 20px;
 
+        .form-label {
+          display: flex;
+          flex-direction: row;
+          gap: 10px;
+
+          .star {
+            color: red;
+          }
+        }
+
         #schedule {
           align-self: center;
         }
@@ -83,5 +93,16 @@
         }
       }
     }
+
+    .custom-alert {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+
+
+      position: absolute;
+      bottom: 40px;
+    }
+
   }
 }
