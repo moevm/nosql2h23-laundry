@@ -1,14 +1,13 @@
 package com.example.springtest.model;
 
 
+import com.example.springtest.model.relationships.Store;
 import lombok.*;
-import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,6 +17,7 @@ import java.util.UUID;
 @Builder
 @Getter
 @Setter
+//@ToString
 public class Warehouse {
     @Id
     private UUID id;
@@ -31,7 +31,7 @@ public class Warehouse {
     private LocalDateTime editDate;
 
     @Relationship(type = "STORE", direction = Relationship.Direction.OUTGOING)
-    private List<Product> product;
+    private List<Store> product;
 
     @Relationship(type = "SUPPLIED_BY", direction = Relationship.Direction.INCOMING)
     private Branch branch;

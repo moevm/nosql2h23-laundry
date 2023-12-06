@@ -2,12 +2,10 @@ package com.example.springtest.model;
 
 import com.example.springtest.model.types.UserRole;
 import lombok.*;
-import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 

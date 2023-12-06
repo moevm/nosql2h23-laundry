@@ -1,13 +1,10 @@
 package com.example.springtest.model;
 
+import com.example.springtest.model.types.ServiceType;
 import lombok.*;
-import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
-import org.springframework.data.neo4j.core.schema.Relationship;
 
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @Node("Service")
@@ -21,10 +18,8 @@ public class Service {
     @Id
     private UUID id;
 
-    private String type;
+    private ServiceType type;
 
-    private Float price;
+    private float price;
 
-    @Relationship(type = "CONTAINS", direction = Relationship.Direction.INCOMING)
-    private List<Order> orders;
 }

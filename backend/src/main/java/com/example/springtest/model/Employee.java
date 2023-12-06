@@ -1,7 +1,9 @@
 package com.example.springtest.model;
 
 import com.example.springtest.model.types.UserRole;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
@@ -20,7 +22,10 @@ public class Employee extends User {
     private List<String> schedule;
 
     @Relationship(type = "ADMINISTERS", direction = Relationship.Direction.OUTGOING)
-    private Branch branch;
+    private Branch branchAdmin;
+
+    @Relationship(type = "MANAGE", direction = Relationship.Direction.OUTGOING)
+    private Branch branchDirector;
 
     @Relationship(type = "MANAGE", direction = Relationship.Direction.OUTGOING)
     private Warehouse warehouse;
@@ -31,7 +36,7 @@ public class Employee extends User {
     @Relationship(type = "RECEIVED_BY", direction = Relationship.Direction.INCOMING)
     private List<Salary> salaries;
 
-    @Builder(builderMethodName="employeeBuilder")
+    @Builder(builderMethodName = "employeeBuilder")
     public Employee(UUID id, UserRole role, String login, String password, String fullName, String email, LocalDateTime creationDate, LocalDateTime editDate, String phone, List<String> schedule) {
         super(id, role, login, password, fullName, email, creationDate, editDate);
         this.phone = phone;

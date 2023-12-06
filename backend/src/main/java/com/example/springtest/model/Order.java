@@ -1,13 +1,12 @@
 package com.example.springtest.model;
 
+import com.example.springtest.model.relationships.Contains;
 import lombok.*;
-import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +21,7 @@ public class Order {
     @Id
     private UUID id;
 
-    private Float price;
+    private float price;
 
     private String status;
 
@@ -34,7 +33,7 @@ public class Order {
     private Client client;
 
     @Relationship(type = "CONTAINS", direction = Relationship.Direction.OUTGOING)
-    private List<Service> services;
+    private List<Contains> services;
 
     @Relationship(type = "EXECUTED_BY", direction = Relationship.Direction.OUTGOING)
     private Branch branch;
