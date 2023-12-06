@@ -1,16 +1,16 @@
 package com.example.springtest.controller;
 
-import com.example.springtest.dto.employee.GetDirectorsWithoutBranchResponse;
+
+import com.example.springtest.dto.employee.*;
 import com.example.springtest.model.Employee;
 import com.example.springtest.model.User;
-import com.example.springtest.model.types.UserRole;
 import com.example.springtest.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -18,6 +18,51 @@ import java.util.List;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+
+    @PostMapping("/api/employee/create")
+    public void createEmployee(@RequestBody CreateEmployeeRequest request) {
+        employeeService.createEmployee(request);
+    }
+
+    @PostMapping("/api/employee/all")
+    public GetAllResponse getAllClients(
+            @RequestBody GetAllRequest request
+            /*@RequestParam("name") String name,
+            @RequestParam("roles[]") String[] roles,
+            @RequestParam("phone") String phone,
+            @RequestParam("elementsOnPage") int elementsOnPage,
+            @RequestParam("page") int page*/
+    ) {
+        List<Employee> employeeList = employeeService.getAllEmployees(request);
+
+        List<GetAllResponse.Data> data = employeeList.stream()
+                .map(client -> GetAllResponse.Data.builder()
+                        .id(client.getId().toString())
+                        .name(client.getFullName())
+                        .role(client.getRole().toString())
+                        .phone(client.getPhone())
+                        .build()
+                ).toList();
+
+        return new GetAllResponse(data);
+    }
+
+    @PostMapping("/api/employee/all_count")
+    public long getTotalClientsCount(
+            @RequestBody GetTotalEmployeesCountRequest request
+            /*@RequestParam("name") String name,
+            @RequestParam("roles[]") String[] roles,
+            @RequestParam("phone") String phone,
+            @RequestParam("elementsOnPage") int elementsOnPage*/
+    ) {
+
+        return employeeService.getTotalCount(request);
+    }
+
+    @PostMapping("/api/employee/delete_list")
+    public void deleteBranches(@RequestBody DeleteEmployeesRequest request) {
+        employeeService.deleteEmployees(request.getIdList().stream().map(UUID::fromString).toList());
+    }
 
     @GetMapping("api/employee/get_directors_no_branch")
     public GetDirectorsWithoutBranchResponse getDirectorsWithoutBranch() {

@@ -1,6 +1,8 @@
 package com.example.springtest.service;
 
-import com.example.springtest.dto.employeeService.NewEmployeeData;
+import com.example.springtest.dto.employee.CreateEmployeeRequest;
+import com.example.springtest.dto.employee.GetAllRequest;
+import com.example.springtest.dto.employee.GetTotalEmployeesCountRequest;
 import com.example.springtest.exceptions.controller.UserAlreadyExistsException;
 import com.example.springtest.model.Employee;
 import com.example.springtest.model.User;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,43 +25,6 @@ public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
-
-    @Transactional
-    public Employee addEmployee(NewEmployeeData data) {
-
-        Optional<User> userOptional = userRepository.findByLogin(data.getLogin());
-        if (userOptional.isPresent()) {
-            throw new UserAlreadyExistsException();
-        }
-
-        LocalDateTime localDateTime = LocalDateTime.now();
-
-        Employee employee = Employee.employeeBuilder()
-                .id(UUID.randomUUID())
-                .login(data.getLogin())
-                .role(UserRole.valueOf(data.getRole()))
-                .password(data.getPassword())
-                .fullName(data.getFullName())
-                .email(data.getEmail())
-                .phone(data.getPhone())
-                .schedule(data.getSchedule())
-                .creationDate(localDateTime)
-                .editDate(localDateTime)
-                .build();
-
-        return employeeRepository.addEmployee(
-                employee.getId(),
-                employee.getRole(),
-                employee.getLogin(),
-                employee.getPassword(),
-                employee.getFullName(),
-                employee.getEmail(),
-                employee.getPhone(),
-                employee.getSchedule(), // TODO: may be format is wrong!
-                employee.getCreationDate(),
-                employee.getEditDate()
-        );
-    }
 
     @Transactional
     public Optional<Employee> findEmployeeByLogin(String login) {
@@ -73,5 +39,63 @@ public class EmployeeService {
     @Transactional
     public List<Employee> findAdminWithoutBranch() {
         return employeeRepository.findAdminWithoutBranch();
+    }
+
+    @Transactional
+    public void createEmployee(CreateEmployeeRequest request) {
+        Optional<User> userOptional = userRepository.findByLogin(request.getLogin());
+        if (userOptional.isPresent()) {
+            throw new UserAlreadyExistsException();
+        }
+
+        String roleString = request.getRole();
+
+        // TODO: Catch IllegalArgumentException?
+        UserRole role = UserRole.valueOf(roleString);
+
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        employeeRepository.createEmployee(
+                UUID.randomUUID(),
+                role,
+                request.getLogin(),
+                request.getPassword(),
+                request.getName(),
+                request.getEmail(),
+                request.getPhone(),
+                request.getSchedule(),
+                localDateTime,
+                localDateTime
+        );
+    }
+
+    @Transactional
+    public List<Employee> getAllEmployees(GetAllRequest request) {
+
+        List<UserRole> possibleRoles = request.getRoles().stream().map(UserRole::valueOf).toList();
+
+        if (possibleRoles.isEmpty()) {
+            possibleRoles = Arrays.stream(UserRole.values()).toList();
+        }
+
+        return employeeRepository.getAllEmployees(request.getName(), request.getPhone(), possibleRoles, request.getElementsOnPage(), request.getElementsOnPage() * (request.getPage() - 1));
+    }
+
+    @Transactional
+    public long getTotalCount(GetTotalEmployeesCountRequest request) {
+        List<UserRole> possibleRoles = request.getRoles().stream().map(UserRole::valueOf).toList();
+
+        if (possibleRoles.isEmpty()) {
+            possibleRoles = Arrays.stream(UserRole.values()).toList();
+        }
+
+        int count = employeeRepository.getTotalCount(request.getName(), request.getPhone(), possibleRoles);
+
+        return (int) (Math.ceil(count / (double) request.getElementsOnPage()));
+    }
+
+    @Transactional
+    public void deleteEmployees(List<UUID> idList) {
+        employeeRepository.deleteEmployees(idList);
     }
 }

@@ -41,43 +41,6 @@ public class AuthController {
                 .name(user.getFullName())
                 .role(user.getRole().toString())
                 .build();
-
-        /*LoginResponse response = null;
-
-        switch (loginRequest.getLogin()) {
-            case "Client":
-                response = LoginResponse.builder()
-                        .id("ABF4562375")
-                        .name("Kate1")
-                        .role("CLIENT")
-                        .build();
-                break;
-            case "Admin":
-                response = LoginResponse.builder()
-                        .id("ABF453864375")
-                        .name("Kate2")
-                        .role("ADMIN")
-                        .build();
-                break;
-            case "Director":
-                response = LoginResponse.builder()
-                        .id("3BFFFFF874")
-                        .name("Kate3")
-                        .role("DIRECTOR")
-                        .build();
-                break;
-            case "Super":
-                response = LoginResponse.builder()
-                        .id("6356974")
-                        .name("Kate4")
-                        .role("SUPERUSER")
-                        .build();
-                break;
-        }
-
-        if (response == null) throw new NoSuchUserException();
-
-        return response;*/
     }
 
     @PostMapping("/api/sign_up")

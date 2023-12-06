@@ -3,6 +3,7 @@ package com.example.springtest;
 import com.example.springtest.dto.branch.CreateBranchRequest;
 import com.example.springtest.dto.branch.GetAllRequest;
 import com.example.springtest.dto.client.CreateClientRequest;
+import com.example.springtest.dto.employee.CreateEmployeeRequest;
 import com.example.springtest.dto.employeeService.NewEmployeeData;
 import com.example.springtest.model.Branch;
 import com.example.springtest.model.Employee;
@@ -36,11 +37,11 @@ public class SpringTestApplication {
         }
 
         try {
-            employeeService.addEmployee(NewEmployeeData.builder()
+            employeeService.createEmployee(CreateEmployeeRequest.builder()
                     .login("Admin")
                     .password("Password")
                     .role(UserRole.ADMIN.toString())
-                    .fullName("Администратор")
+                    .name("Администратор")
                     .email("admin@admin.ru")
                     .phone("+73456754324356")
                     .schedule(List.of("Monday", "12", "15", "Tuesday", "10", "19"))
@@ -49,11 +50,11 @@ public class SpringTestApplication {
         }
 
         try {
-            employeeService.addEmployee(NewEmployeeData.builder()
+            employeeService.createEmployee(CreateEmployeeRequest.builder()
                     .login("Director")
                     .password("Password")
                     .role(UserRole.DIRECTOR.toString())
-                    .fullName("Директор Филиала")
+                    .name("Директор Филиала")
                     .email("director@director.ru")
                     .phone("+435682475")
                     .schedule(List.of("Monday", "12", "15", "Friday", "10", "19"))
@@ -62,11 +63,11 @@ public class SpringTestApplication {
         }
 
         try {
-            employeeService.addEmployee(NewEmployeeData.builder()
+            employeeService.createEmployee(CreateEmployeeRequest.builder()
                     .login("Superuser")
                     .password("Password")
                     .role(UserRole.SUPERUSER.toString())
-                    .fullName("Суперпользователь")
+                    .name("Суперпользователь")
                     .email("super@user.us")
                     .phone("+3345765638")
                     .schedule(List.of("Monday", "12", "15", "Tuesday", "10", "19"))
