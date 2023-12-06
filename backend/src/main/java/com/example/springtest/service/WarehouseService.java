@@ -35,7 +35,7 @@ public class WarehouseService {
 
     @Transactional
     public long getTotalCount(GetTotalWarehousesCountRequest request) {
-        int count = repository.getTotalCount(request.getAddress(), request.getBranch(), request.getElementsOnPage());
+        int count = repository.getTotalCount(request.getAddress(), request.getBranch());
 
         return (int) (Math.ceil(count / (double) request.getElementsOnPage()));
     }

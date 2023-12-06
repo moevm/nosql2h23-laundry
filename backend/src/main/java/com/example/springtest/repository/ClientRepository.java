@@ -17,11 +17,14 @@ import java.util.UUID;
 public interface ClientRepository extends Neo4jRepository<Client, UUID> {
 
     @Query("MATCH (c:Client) " +
+            "WHERE c.fullName CONTAINS $name AND c.email CONTAINS $email " +
             "OPTIONAL MATCH (c)<-[ord:ORDERED_BY]-(orders:Order) " +
-            "RETURN c, collect(ord), collect(orders)")
-    List<Client> getAllClients();
+            "RETURN c, collect(ord), collect(orders) " +
+            "SKIP $skip " +
+            "LIMIT $elementsOnPage")
+    List<Client> getAllClients(String name, String email, int elementsOnPage, int skip);
 
-    // TODO: Has double tag been written correctly?
+
     @Query("CREATE (c:Client:User {id: $id, role: $role, login: $login, password: $password, fullName: $fullName, email: $email, creationDate: $creationDate, editDate: $editDate}) RETURN c")
     Client addClient(UUID id, UserRole role, String login, String password, String fullName, String email, LocalDateTime creationDate, LocalDateTime editDate);
 
@@ -38,4 +41,14 @@ public interface ClientRepository extends Neo4jRepository<Client, UUID> {
             "LIMIT 1")
     Optional<Client> findById(UUID id);
 
+    @Query("MATCH (c:Client) " +
+            "WHERE c.fullName CONTAINS $name AND c.email CONTAINS $email " +
+            "RETURN count(c)")
+    int getTotalCount(String name, String email);
+
+    // TODO: cascade?
+    @Query("MATCH (c:Client) " +
+            "WHERE c.id in $idList " +
+            "DETACH DELETE c")
+    void deleteClients(List<UUID> idList);
 }

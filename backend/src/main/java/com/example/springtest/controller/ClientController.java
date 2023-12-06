@@ -1,19 +1,14 @@
 package com.example.springtest.controller;
 
-import com.example.springtest.dto.clientService.NewClientData;
-import com.example.springtest.dto.login.LoginResponse;
-import com.example.springtest.dto.signUp.SignUpRequest;
-import com.example.springtest.dto.signUp.SignUpResponse;
-import com.example.springtest.exceptions.controller.NoSuchUserException;
-import com.example.springtest.exceptions.controller.UserAlreadyExistsException;
+import com.example.springtest.dto.client.*;
+import com.example.springtest.model.Branch;
 import com.example.springtest.model.Client;
 import com.example.springtest.service.ClientService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -22,8 +17,53 @@ public class ClientController {
 
     private final ClientService clientService;
 
-    @GetMapping("/api/clients/getAll")
-    public List<Client> getAllClients() {
-        return clientService.getAllClients();
+    @PostMapping("/api/client/create")
+    public void createClient(@RequestBody CreateClientRequest request) {
+        clientService.createClient(request);
     }
+
+    @GetMapping("/api/client/all")
+    public GetAllResponse getAllClients(
+            @RequestParam("name") String name,
+            @RequestParam("email") String email,
+            @RequestParam("elementsOnPage") int elementsOnPage,
+            @RequestParam("page") int page
+    ) {
+        List<Client> clientList = clientService.getAllClients(GetAllRequest.builder()
+                .name(name)
+                .email(email)
+                .elementsOnPage(elementsOnPage)
+                .page(page)
+                .build());
+
+        List<GetAllResponse.Data> data = clientList.stream()
+                .map(client -> GetAllResponse.Data.builder()
+                        .id(client.getId().toString())
+                        .name(client.getFullName())
+                        .email(client.getEmail())
+                        .build()
+                ).toList();
+
+        return new GetAllResponse(data);
+    }
+
+    @GetMapping("/api/client/all_count")
+    public long getTotalClientsCount(
+            @RequestParam("name") String name,
+            @RequestParam("email") String email,
+            @RequestParam("elementsOnPage") int elementsOnPage
+    ) {
+
+        return clientService.getTotalCount(GetTotalClientsCountRequest.builder()
+                .name(name)
+                .email(email)
+                .elementsOnPage(elementsOnPage)
+                .build());
+    }
+
+    @PostMapping("/api/client/delete_list")
+    public void deleteBranches(@RequestBody DeleteClientsRequest request) {
+        clientService.deleteClients(request.getIdList().stream().map(UUID::fromString).toList());
+    }
+
 }

@@ -38,7 +38,7 @@ public interface WarehouseRepository extends Neo4jRepository<Warehouse, UUID> {
     @Query("MATCH (w:Warehouse)<-[sup:SUPPLIED_BY]-(b:Branch) " +
             "WHERE w.address CONTAINS $address AND b.address CONTAINS $branch " +
             "RETURN count(w)")
-    int getTotalCount(String address, String branch, int elementsOnPage);
+    int getTotalCount(String address, String branch);
 
 
     @Query("MATCH (w:Warehouse) " +

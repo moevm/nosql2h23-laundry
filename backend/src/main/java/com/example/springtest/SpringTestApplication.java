@@ -2,23 +2,19 @@ package com.example.springtest;
 
 import com.example.springtest.dto.branch.CreateBranchRequest;
 import com.example.springtest.dto.branch.GetAllRequest;
-import com.example.springtest.dto.branch.GetTotalBranchesCountRequest;
-import com.example.springtest.dto.clientService.NewClientData;
+import com.example.springtest.dto.client.CreateClientRequest;
 import com.example.springtest.dto.employeeService.NewEmployeeData;
 import com.example.springtest.model.Branch;
 import com.example.springtest.model.Employee;
-import com.example.springtest.model.User;
 import com.example.springtest.model.types.UserRole;
 import com.example.springtest.service.BranchService;
 import com.example.springtest.service.ClientService;
 import com.example.springtest.service.EmployeeService;
-import com.example.springtest.service.UserService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.List;
-import java.util.Optional;
 
 @SpringBootApplication
 public class SpringTestApplication {
@@ -30,10 +26,10 @@ public class SpringTestApplication {
         EmployeeService employeeService = context.getBean(EmployeeService.class);
 
         try {
-            clientService.addClient(NewClientData.builder()
+            clientService.createClient(CreateClientRequest.builder()
                     .login("Client")
                     .password("Password")
-                    .fullName("Клиент")
+                    .name("Клиент")
                     .email("client@client.com")
                     .build());
         } catch (Exception ignored) {

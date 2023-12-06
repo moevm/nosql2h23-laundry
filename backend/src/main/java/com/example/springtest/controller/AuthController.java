@@ -1,6 +1,6 @@
 package com.example.springtest.controller;
 
-import com.example.springtest.dto.clientService.NewClientData;
+import com.example.springtest.dto.client.CreateClientRequest;
 import com.example.springtest.dto.login.LoginRequest;
 import com.example.springtest.dto.login.LoginResponse;
 import com.example.springtest.dto.signUp.SignUpRequest;
@@ -89,11 +89,10 @@ public class AuthController {
             throw new UserAlreadyExistsException();
         }
 
-        Client newClient = clientService.addClient(
-                NewClientData.builder()
+        Client newClient = clientService.createClient(CreateClientRequest.builder()
                         .login(request.getLogin())
                         .password(request.getPassword())
-                        .fullName(request.getFullName())
+                        .name(request.getFullName())
                         .email(request.getEmail())
                         .build()
         );

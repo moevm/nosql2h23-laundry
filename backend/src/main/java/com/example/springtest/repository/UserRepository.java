@@ -19,5 +19,4 @@ public interface UserRepository extends Neo4jRepository<User, UUID> {
 
     @Query("MATCH (u:User {id: $id}) RETURN u LIMIT 1")
     Optional<User> findById(UUID id);
-
 }

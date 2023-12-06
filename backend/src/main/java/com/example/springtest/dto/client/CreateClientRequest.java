@@ -1,19 +1,21 @@
-package com.example.springtest.dto.clientService;
+package com.example.springtest.dto.client;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class NewClientData {
+public class CreateClientRequest {
 
     private String login;
 
     private String password;
 
-    private String fullName;
+    private String name;
 
     private String email;
 

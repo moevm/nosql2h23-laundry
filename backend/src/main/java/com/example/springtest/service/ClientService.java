@@ -1,8 +1,11 @@
 package com.example.springtest.service;
 
-import com.example.springtest.dto.clientService.NewClientData;
+import com.example.springtest.dto.client.CreateClientRequest;
+import com.example.springtest.dto.client.GetAllRequest;
+import com.example.springtest.dto.client.GetTotalClientsCountRequest;
 import com.example.springtest.exceptions.controller.UserAlreadyExistsException;
 import com.example.springtest.model.User;
+import com.example.springtest.model.types.UserRole;
 import com.example.springtest.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,31 +28,8 @@ public class ClientService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Client addClient(NewClientData data) {
-
-        LocalDateTime localDateTime = LocalDateTime.now();
-
-        Optional<User> userOptional = userRepository.findByLogin(data.getLogin());
-        if (userOptional.isPresent()) {
-            throw new UserAlreadyExistsException();
-        }
-
-        Client client = Client.clientBuilder()
-                .id(UUID.randomUUID())
-                .login(data.getLogin())
-                .password(data.getPassword())
-                .email(data.getEmail())
-                .fullName(data.getFullName())
-                .creationDate(localDateTime)
-                .editDate(localDateTime)
-                .build();
-
-        return clientRepository.addClient(client.getId(), client.getRole(), client.getLogin(), client.getPassword(), client.getFullName(), client.getEmail(), client.getCreationDate(), client.getEditDate());
-    }
-
-    @Transactional
-    public List<Client> getAllClients() {
-        return clientRepository.getAllClients();
+    public List<Client> getAllClients(GetAllRequest request) {
+        return clientRepository.getAllClients(request.getName(), request.getEmail(), request.getElementsOnPage(), request.getElementsOnPage() * (request.getPage() - 1));
     }
 
     @Transactional
@@ -60,6 +40,32 @@ public class ClientService {
     @Transactional
     public Optional<Client> getClientById(UUID id) {
         return clientRepository.findById(id);
+    }
+
+    @Transactional
+    public Client createClient(CreateClientRequest request) {
+
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        Optional<User> userOptional = userRepository.findByLogin(request.getLogin());
+        if (userOptional.isPresent()) {
+            throw new UserAlreadyExistsException();
+        }
+
+        return clientRepository.addClient(UUID.randomUUID(), UserRole.CLIENT, request.getLogin(), request.getPassword(), request.getName(), request.getEmail(), localDateTime, localDateTime);
+
+    }
+
+    @Transactional
+    public long getTotalCount(GetTotalClientsCountRequest request) {
+        int count = clientRepository.getTotalCount(request.getName(), request.getEmail());
+
+        return (int) (Math.ceil(count / (double) request.getElementsOnPage()));
+    }
+
+    @Transactional
+    public void deleteClients(List<UUID> idList) {
+        clientRepository.deleteClients(idList);
     }
 }
 
