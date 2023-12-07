@@ -5,7 +5,7 @@ import lombok.*;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 
@@ -31,7 +31,7 @@ public class User {
 
     private String email;
 
-    private LocalDateTime creationDate;
+    private ZonedDateTime creationDate;
 
-    private LocalDateTime editDate;
+    private ZonedDateTime editDate;
 }

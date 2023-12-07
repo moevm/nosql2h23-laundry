@@ -25,14 +25,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/api/employee/all")
-    public GetAllResponse getAllClients(
-            @RequestBody GetAllRequest request
-            /*@RequestParam("name") String name,
-            @RequestParam("roles[]") String[] roles,
-            @RequestParam("phone") String phone,
-            @RequestParam("elementsOnPage") int elementsOnPage,
-            @RequestParam("page") int page*/
-    ) {
+    public GetAllResponse getAllEmployees(@RequestBody GetAllRequest request) {
         List<Employee> employeeList = employeeService.getAllEmployees(request);
 
         List<GetAllResponse.Data> data = employeeList.stream()
@@ -48,19 +41,12 @@ public class EmployeeController {
     }
 
     @PostMapping("/api/employee/all_count")
-    public long getTotalClientsCount(
-            @RequestBody GetTotalEmployeesCountRequest request
-            /*@RequestParam("name") String name,
-            @RequestParam("roles[]") String[] roles,
-            @RequestParam("phone") String phone,
-            @RequestParam("elementsOnPage") int elementsOnPage*/
-    ) {
-
+    public long getTotalEmployeesCount(@RequestBody GetTotalEmployeesCountRequest request) {
         return employeeService.getTotalCount(request);
     }
 
     @PostMapping("/api/employee/delete_list")
-    public void deleteBranches(@RequestBody DeleteEmployeesRequest request) {
+    public void deleteEmployees(@RequestBody DeleteEmployeesRequest request) {
         employeeService.deleteEmployees(request.getIdList().stream().map(UUID::fromString).toList());
     }
 

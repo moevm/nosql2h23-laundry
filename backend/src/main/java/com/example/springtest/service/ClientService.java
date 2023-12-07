@@ -15,6 +15,7 @@ import com.example.springtest.repository.ClientRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,6 +34,11 @@ public class ClientService {
     }
 
     @Transactional
+    public List<Client> getAllClients() {
+        return clientRepository.getAllClients();
+    }
+
+    @Transactional
     public Optional<Client> getClientByLogin(String login) {
         return clientRepository.findByLogin(login);
     }
@@ -45,14 +51,14 @@ public class ClientService {
     @Transactional
     public Client createClient(CreateClientRequest request) {
 
-        LocalDateTime localDateTime = LocalDateTime.now();
-
         Optional<User> userOptional = userRepository.findByLogin(request.getLogin());
         if (userOptional.isPresent()) {
             throw new UserAlreadyExistsException();
         }
 
-        return clientRepository.addClient(UUID.randomUUID(), UserRole.CLIENT, request.getLogin(), request.getPassword(), request.getName(), request.getEmail(), localDateTime, localDateTime);
+        ZonedDateTime creationDateTime = ZonedDateTime.now();
+
+        return clientRepository.addClient(UUID.randomUUID(), UserRole.CLIENT, request.getLogin(), request.getPassword(), request.getName(), request.getEmail(), creationDateTime, creationDateTime);
 
     }
 
@@ -67,5 +73,7 @@ public class ClientService {
     public void deleteClients(List<UUID> idList) {
         clientRepository.deleteClients(idList);
     }
+
+
 }
 

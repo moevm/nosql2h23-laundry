@@ -5,12 +5,12 @@ import com.example.springtest.dto.branch.GetAllRequest;
 import com.example.springtest.dto.client.CreateClientRequest;
 import com.example.springtest.dto.employee.CreateEmployeeRequest;
 import com.example.springtest.dto.employeeService.NewEmployeeData;
+import com.example.springtest.dto.order.CreateOrderRequest;
 import com.example.springtest.model.Branch;
 import com.example.springtest.model.Employee;
+import com.example.springtest.model.types.ServiceType;
 import com.example.springtest.model.types.UserRole;
-import com.example.springtest.service.BranchService;
-import com.example.springtest.service.ClientService;
-import com.example.springtest.service.EmployeeService;
+import com.example.springtest.service.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -88,18 +88,49 @@ public class SpringTestApplication {
                     .warehouseAddress("")
                     .build());
 
+        } catch (Exception pop) {
+        }
+
+
+        ServiceService serviceService = context.getBean(ServiceService.class);
+
+        try {
+            serviceService.createService(ServiceType.WASHING, 200);
         } catch (Exception ignored) {
         }
 
-        List<Branch> branches = branchService.getAllBranches(GetAllRequest.builder()
-                        .director("")
-                        .warehouse("")
-                        .address("POP")
-                        .elementsOnPage(10)
-                        .page(1)
-                .build());
+        try {
+            serviceService.createService(ServiceType.DRYING, 300);
+        } catch (Exception ignored) {
+        }
 
-        System.out.println(branches.toString());
+        try {
+            serviceService.createService(ServiceType.IRONING, 200);
+        } catch (Exception ignored) {
+        }
+
+        try {
+            serviceService.createService(ServiceType.POWDER, 50);
+        } catch (Exception ignored) {
+        }
+
+        try {
+            serviceService.createService(ServiceType.BLEACH, 100);
+        } catch (Exception ignored) {
+        }
+
+
+        /*OrderService orderService = context.getBean(OrderService.class);
+
+        orderService.createOrder(CreateOrderRequest.builder()
+                .branch("Address")
+                .clientName("Клиент")
+                .services(List.of(
+                        CreateOrderRequest.Service.builder()
+                                .type(ServiceType.BLEACH.toString())
+                                .count(1).build()
+                ))
+                .build());*/
 
 
     }

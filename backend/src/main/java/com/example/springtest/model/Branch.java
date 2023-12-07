@@ -5,7 +5,7 @@ import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,9 +25,9 @@ public class Branch {
 
     private List<String> schedule;
 
-    private LocalDateTime creationDate;
+    private ZonedDateTime creationDate;
 
-    private LocalDateTime editDate;
+    private ZonedDateTime editDate;
 
     @Relationship(type = "EXECUTED_BY", direction = Relationship.Direction.INCOMING)
     private List<Order> orders;

@@ -22,18 +22,9 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public List<User> getAllUsers() {
-        return null;
-    }
-
-    @Transactional
     public Optional<User> getUserByLogin(String login) {
         return userRepository.findByLogin(login);
     }
 
-    @Transactional
-    public User getUserById(UUID id) {
-        return null;
-    }
 }
 

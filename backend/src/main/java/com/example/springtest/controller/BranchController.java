@@ -61,6 +61,13 @@ public class BranchController {
         return new GetAllResponse(data);
     }
 
+    @GetMapping("/api/branch/all_compact")
+    public GetAllCompactResponse getAllBranches() {
+        List<Branch> branchList = branchService.getAllBranches();
+
+        return new GetAllCompactResponse(branchList.stream().map(Branch::getAddress).toList());
+    }
+
     @GetMapping("/api/branch/all_count")
     public long getTotalBranchesCount(
             @RequestParam("address") String address,

@@ -5,6 +5,7 @@ import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -48,5 +49,5 @@ public interface WarehouseRepository extends Neo4jRepository<Warehouse, UUID> {
 
     @Query("MATCH (branch:Branch {address: $branch})<-[:MANAGE]-(director:Employee) " +
             "CREATE (director)-[:MANAGE]->(warehouse:Warehouse {id: $id, address: $address, schedule: $schedule, creationDate: $creationDate, editDate: $editDate})<-[:SUPPLIED_BY]-(branch)")
-    void createWarehouse(UUID id, String address, String branch, List<String> schedule, LocalDateTime creationDate, LocalDateTime editDate);
+    void createWarehouse(UUID id, String address, String branch, List<String> schedule, ZonedDateTime creationDate, ZonedDateTime editDate);
 }

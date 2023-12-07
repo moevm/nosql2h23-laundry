@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -53,7 +54,7 @@ public class EmployeeService {
         // TODO: Catch IllegalArgumentException?
         UserRole role = UserRole.valueOf(roleString);
 
-        LocalDateTime localDateTime = LocalDateTime.now();
+        ZonedDateTime creationDateTime = ZonedDateTime.now();
 
         employeeRepository.createEmployee(
                 UUID.randomUUID(),
@@ -64,8 +65,8 @@ public class EmployeeService {
                 request.getEmail(),
                 request.getPhone(),
                 request.getSchedule(),
-                localDateTime,
-                localDateTime
+                creationDateTime,
+                creationDateTime
         );
     }
 

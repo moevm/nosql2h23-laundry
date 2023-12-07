@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,6 +29,11 @@ public class BranchService {
     private final BranchRepository branchRepository;
     private final WarehouseRepository warehouseRepository;
     private final EmployeeRepository employeeRepository;
+
+    @Transactional
+    public List<Branch> getAllBranches() {
+        return branchRepository.getAllBranches();
+    }
 
     @Transactional
     public List<Branch> getAllBranches(GetAllRequest request) {
@@ -89,9 +95,9 @@ public class BranchService {
             throw new BranchAlreadyExistsException();
         }
 
-        LocalDateTime localDateTime = LocalDateTime.now();
+        ZonedDateTime creationDateTime = ZonedDateTime.now();
 
-        Branch createdBranch = branchRepository.createBranch(UUID.randomUUID(), request.getAddress(), request.getDirectorName(), request.getAdminName(), request.getSchedule(), localDateTime, localDateTime);
+        Branch createdBranch = branchRepository.createBranch(UUID.randomUUID(), request.getAddress(), request.getDirectorName(), request.getAdminName(), request.getSchedule(), creationDateTime, creationDateTime);
 
         Optional<Warehouse> warehouse = warehouseRepository.findByAddress(request.getWarehouseAddress());
 

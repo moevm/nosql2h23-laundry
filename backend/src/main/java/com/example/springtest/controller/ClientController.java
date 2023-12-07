@@ -3,6 +3,7 @@ package com.example.springtest.controller;
 import com.example.springtest.dto.client.*;
 import com.example.springtest.model.Branch;
 import com.example.springtest.model.Client;
+import com.example.springtest.model.User;
 import com.example.springtest.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +46,13 @@ public class ClientController {
                 ).toList();
 
         return new GetAllResponse(data);
+    }
+
+    @GetMapping("/api/client/all_compact")
+    public GetAllCompactResponse getAllClients() {
+        List<Client> clientList = clientService.getAllClients();
+
+        return new GetAllCompactResponse(clientList.stream().map(User::getFullName).toList());
     }
 
     @GetMapping("/api/client/all_count")

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,6 +46,7 @@ public class WarehouseService {
         repository.deleteWarehouses(idList);
     }
 
+    @Transactional
     public void createWarehouse(CreateWarehouseRequest request) {
         Optional<Warehouse> warehouseOptional = repository.findByAddress(request.getAddress());
 
@@ -52,8 +54,8 @@ public class WarehouseService {
             throw new WarehouseAlreadyExistsException();
         }
 
-        LocalDateTime localDateTime = LocalDateTime.now();
+        ZonedDateTime creationDateTime = ZonedDateTime.now();
 
-        repository.createWarehouse(UUID.randomUUID(), request.getAddress(), request.getBranchAddress(), request.getSchedule(), localDateTime, localDateTime);
+        repository.createWarehouse(UUID.randomUUID(), request.getAddress(), request.getBranchAddress(), request.getSchedule(), creationDateTime, creationDateTime);
     }
 }

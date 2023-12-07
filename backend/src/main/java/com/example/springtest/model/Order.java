@@ -1,12 +1,13 @@
 package com.example.springtest.model;
 
 import com.example.springtest.model.relationships.Contains;
+import com.example.springtest.model.types.OrderState;
 import lombok.*;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,11 +24,11 @@ public class Order {
 
     private float price;
 
-    private String status;
+    private OrderState state;
 
-    private LocalDateTime creationDate;
+    private ZonedDateTime creationDate;
 
-    private LocalDateTime editDate;
+    private ZonedDateTime editDate;
 
     @Relationship(type = "ORDERED_BY", direction = Relationship.Direction.OUTGOING)
     private Client client;

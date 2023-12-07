@@ -4,7 +4,7 @@ import com.example.springtest.model.Branch;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,6 +20,13 @@ public interface BranchRepository extends Neo4jRepository<Branch, UUID> {
             "SKIP $skip " +
             "LIMIT $elementsOnPage")
     List<Branch> getAllBranches(String address, String warehouse, String director, int elementsOnPage, int skip);
+
+    @Query("MATCH (b:Branch) " +
+            "MATCH (b)<-[adm:ADMINISTERS]-(admin:Employee) " +
+            "MATCH (b)<-[man:MANAGE]-(director:Employee) " +
+            "OPTIONAL MATCH (b)-[sup:SUPPLIED_BY]->(w:Warehouse) " +
+            "RETURN b, sup, w, adm, admin, man, director")
+    List<Branch> getAllBranches();
 
 
     @Query("MATCH (b:Branch) " +
@@ -40,7 +47,7 @@ public interface BranchRepository extends Neo4jRepository<Branch, UUID> {
             "MATCH (admin:Employee {role: 'ADMIN', fullName: $adminName}) " +
             "CREATE (director)-[manage:MANAGE]->(branch:Branch {id: $id, address: $address, schedule: $schedule, creationDate: $creationDate, editDate: $editDate})<-[administers:ADMINISTERS]-(admin) " +
             "RETURN branch, administers, admin, manage, director")
-    Branch createBranch(UUID id, String address, String directorName, String adminName, List<String> schedule, LocalDateTime creationDate, LocalDateTime editDate);
+    Branch createBranch(UUID id, String address, String directorName, String adminName, List<String> schedule, ZonedDateTime creationDate, ZonedDateTime editDate);
 
     @Query("MATCH (b:Branch {id: $branchId}) " +
             "MATCH (w:Warehouse {id: $warehouseId}) " +
@@ -59,4 +66,5 @@ public interface BranchRepository extends Neo4jRepository<Branch, UUID> {
             "WHERE NOT (b)-[:SUPPLIED_BY]->() " +
             "RETURN b")
     List<Branch> findBranchesWithoutWarehouse();
+
 }

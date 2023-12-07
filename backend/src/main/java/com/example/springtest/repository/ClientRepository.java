@@ -8,6 +8,7 @@ import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -24,9 +25,12 @@ public interface ClientRepository extends Neo4jRepository<Client, UUID> {
             "LIMIT $elementsOnPage")
     List<Client> getAllClients(String name, String email, int elementsOnPage, int skip);
 
+    @Query("MATCH (c:Client) " +
+            "RETURN c")
+    List<Client> getAllClients();
 
     @Query("CREATE (c:Client:User {id: $id, role: $role, login: $login, password: $password, fullName: $fullName, email: $email, creationDate: $creationDate, editDate: $editDate}) RETURN c")
-    Client addClient(UUID id, UserRole role, String login, String password, String fullName, String email, LocalDateTime creationDate, LocalDateTime editDate);
+    Client addClient(UUID id, UserRole role, String login, String password, String fullName, String email, ZonedDateTime creationDate, ZonedDateTime editDate);
 
 
     @Query("MATCH (c:Client {login: $login}) " +

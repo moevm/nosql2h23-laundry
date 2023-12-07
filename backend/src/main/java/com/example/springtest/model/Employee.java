@@ -8,6 +8,7 @@ import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,7 +38,7 @@ public class Employee extends User {
     private List<Salary> salaries;
 
     @Builder(builderMethodName = "employeeBuilder")
-    public Employee(UUID id, UserRole role, String login, String password, String fullName, String email, LocalDateTime creationDate, LocalDateTime editDate, String phone, List<String> schedule) {
+    public Employee(UUID id, UserRole role, String login, String password, String fullName, String email, ZonedDateTime creationDate, ZonedDateTime editDate, String phone, List<String> schedule) {
         super(id, role, login, password, fullName, email, creationDate, editDate);
         this.phone = phone;
         this.schedule = schedule;
