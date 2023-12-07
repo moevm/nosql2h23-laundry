@@ -11,9 +11,10 @@ import {useAppDispatch, useAppSelector} from "../../hooks";
 import {useCookies} from "react-cookie";
 import {setUser} from "../../features/auth/authSlice";
 import {Link, Navigate, useNavigate, useSearchParams} from "react-router-dom";
+import axios from "axios";
 
 type TableData = {
-    id: number,
+    id: string,
     date: string,
     status: string,
     branch: string
@@ -40,6 +41,11 @@ export function OrdersList() {
     let [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
 
+    const auth = useAppSelector((state) => state.auth)
+    const dispatch = useAppDispatch()
+    const [cookies] = useCookies(['auth']);
+
+
     function getBadgeType(text: string): string {
         switch (text) {
             case "Новый": {
@@ -62,6 +68,7 @@ export function OrdersList() {
             }
         }
     }
+
 
     function createPaginationElements(): JSX.Element[] {
         const pagesShown: number = 5;
@@ -116,84 +123,31 @@ export function OrdersList() {
             );
         }
 
-        items.push(
-            <Pagination.Item key={totalPages} active={currentPage === totalPages} onClick={() => {
-                if (currentPage !== totalPages)
-                    setCurrentPage(totalPages)
-            }}>
-                {totalPages}
-            </Pagination.Item>
-        );
+        if (totalPages > 1) {
+            items.push(
+                <Pagination.Item key={totalPages} active={currentPage === totalPages} onClick={() => {
+                    if (currentPage !== totalPages)
+                        setCurrentPage(totalPages)
+                }}>
+                    {totalPages}
+                </Pagination.Item>
+            );
+        }
+
 
         return items;
     }
 
-    let tableData: TableData[] = [
-        {
-            id: 1235,
-            date: "16.03.2352",
-            status: "Новый",
-            branch: "Москва, улица Рождественка, 20/8с16"
-        },
-        {
-            id: 2145,
-            date: "23.01.2022",
-            status: "Активный",
-            branch: "Большой проспект П.С., 88, Санкт-Петербург, 197136"
-        },
-        {
-            id: 3674,
-            date: "23.01.2022",
-            status: "Выполненный",
-            branch: "Большой проспект П.С., 88, Санкт-Петербург, 197136"
-        },
-        {
-            id: 424386,
-            date: "23.01.2022",
-            status: "Завершенный",
-            branch: "Большой проспект П.С., 88, Санкт-Петербург, 197136"
-        },
-        {
-            id: 163235,
-            date: "23.01.2022",
-            status: "Отмененный",
-            branch: "Большой проспект П.С., 88, Санкт-Петербург, 197136"
-        },
-        {
-            id: 5838,
-            date: "23.01.2022",
-            status: "Активный",
-            branch: "Большой проспект П.С., 88, Санкт-Петербург, 197136"
-        },
-        {
-            id: 637045,
-            date: "23.01.2022",
-            status: "Активный",
-            branch: "Большой проспект П.С., 88, Санкт-Петербург, 197136"
-        },
-        {
-            id: 64586,
-            date: "23.01.2022",
-            status: "Активный",
-            branch: "Большой проспект П.С., 88, Санкт-Петербург, 197136"
-        },
-        {
-            id: 24528,
-            date: "23.01.2022",
-            status: "Активный",
-            branch: "Большой проспект П.С., 88, Санкт-Петербург, 197136"
-        },
-        {
-            id: 20865,
-            date: "23.01.2022",
-            status: "Активный",
-            branch: "Большой проспект П.С., 88, Санкт-Петербург, 197136"
-        }
-    ];
-
     let [currentPage, setCurrentPage] = useState(1);
     let [totalPages, setTotalPages] = useState(10);
     let [elementsOnPage, setElementsOnPage] = useState(10);
+
+    useEffect(() => {
+        if (isInitialized) {
+            loadData();
+        }
+    }, [currentPage, elementsOnPage]);
+
 
     const [sortState, setSortState] = useState("state_down");
 
@@ -244,7 +198,7 @@ export function OrdersList() {
     }
 
     const [dateFilter, setDateFilter] = useState<{ start: Date; end: Date; } | null>(initDateFilter());
-    const [statusFilter, setStatusFilter] = useState<{ [key: string]: boolean }>(initStatusFilter());
+    const [stateFilter, setStateFilter] = useState<{ [key: string]: boolean }>(initStatusFilter());
     const [branchFilter, setBranchFilter] = useState(initBranchFilter);
 
     useEffect(() => {
@@ -271,8 +225,8 @@ export function OrdersList() {
 
         let hasAnyStatusFilter = false;
 
-        for (const key in statusFilter) {
-            if (statusFilter[key]) {
+        for (const key in stateFilter) {
+            if (stateFilter[key]) {
                 hasAnyStatusFilter = true;
                 break;
             }
@@ -280,8 +234,8 @@ export function OrdersList() {
 
         if (hasAnyStatusFilter) {
             let statusFilterString = "";
-            for (const key in statusFilter) {
-                if (statusFilter[key]) {
+            for (const key in stateFilter) {
+                if (stateFilter[key]) {
                     statusFilterString += key + ":"
                 }
             }
@@ -316,17 +270,153 @@ export function OrdersList() {
             }
         }
 
-    }, [dateFilter, statusFilter, branchFilter]);
+        if (isInitialized) {
+            loadData();
+        }
+
+    }, [dateFilter, stateFilter, branchFilter]);
 
     useEffect(() => {
-        // TODO: call backend for new data
-        console.log("New Data")
+        if (!isInitialized) {
+            setInitialized(true);
+        }
 
-    }, [currentPage, elementsOnPage]);
+        if (!auth.authorized) {
+            if (cookies["auth"] !== undefined) {
+                dispatch(setUser({
+                    id: cookies["auth"].id,
+                    login: cookies["auth"].login,
+                    name: cookies["auth"].name,
+                    role: cookies["auth"].role
+                }))
+            }
+        }
 
-    const auth = useAppSelector((state) => state.auth)
-    const dispatch = useAppDispatch()
-    const [cookies] = useCookies(['auth']);
+        loadData();
+    }, []);
+
+
+    const [tableData, setTableData] = useState<TableData[]>([]);
+    const [isInitialized, setInitialized] = useState(false);
+
+    async function loadData() {
+
+        if (!auth.authorized) {
+            setInitialized(false);
+            return;
+        }
+
+        let states: string[] = []
+
+        for (const stateFilterKey in stateFilter) {
+            if (stateFilter[stateFilterKey]) {
+                let name = "";
+
+                switch (stateFilterKey) {
+                    case "Новый": {
+                        name = "NEW";
+                        break;
+                    }
+                    case "Активный": {
+                        name = "ACTIVE";
+                        break;
+                    }
+                    case "Выполненный": {
+                        name = "READY";
+                        break;
+                    }
+                    case "Завершенный": {
+                        name = "COMPLETED";
+                        break;
+                    }
+                    case "Отмененный": {
+                        name = "CANCELED";
+                        break;
+                    }
+                }
+
+                states.push(name);
+            }
+        }
+
+        let dateData = {
+            start: dateFilter?.start.toUTCString(),
+            end: dateFilter?.end.toUTCString()
+        }
+
+        await axios.post("/api/order/all_count", {
+            dates: dateData,
+            states: states,
+            branch: branchFilter,
+            clientId: (auth.role === "CLIENT") ? auth.id : "",
+            elementsOnPage: elementsOnPage
+        },{
+            baseURL: "http://localhost:8080",
+        }).then(async (response) => {
+
+            setTotalPages(parseInt(response.data))
+
+            await axios.post("/api/order/all", {
+                dates: dateData,
+                states: states,
+                branch: branchFilter,
+                clientId: (auth.role === "CLIENT") ? auth.id : "",
+                elementsOnPage: elementsOnPage,
+                page: currentPage
+            }, {
+                baseURL: "http://localhost:8080",
+            }).then((response) => {
+
+                let tmpData: TableData[] = response.data.data;
+
+                for (const dataElement of tmpData) {
+                    let date = new Date(dataElement.date);
+                    dataElement.date = date.toLocaleDateString(undefined, {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: false,
+                    });
+
+                    let stateTextRu = dataElement.status;
+                    switch (stateTextRu) {
+                        case "NEW": {
+                            dataElement.status = "Новый";
+                            break;
+                        }
+                        case "ACTIVE": {
+                            dataElement.status = "Активный";
+                            break;
+                        }
+                        case "READY": {
+                            dataElement.status = "Выполненный";
+                            break;
+                        }
+                        case "COMPLETED": {
+                            dataElement.status = "Завершенный";
+                            break;
+                        }
+                        case "CANCELED": {
+                            dataElement.status = "Отмененный";
+                            break;
+                        }
+                    }
+
+                }
+
+                setTableData(tmpData);
+            }).catch((error) => {
+                console.log(error)
+            })
+
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+
 
     if (!auth.authorized) {
         if (cookies["auth"] !== undefined) {
@@ -352,6 +442,7 @@ export function OrdersList() {
                         </div>
                         <div id="controls-1">
                             {
+                                // TODO: This genius button can rid of order page (for a while at least)
                                 auth.role !== "CLIENT" &&
                                 <DropdownButton title="Действия">
                                     <Dropdown.Item key={"approve_all"}>Подтвердить все</Dropdown.Item>
@@ -363,7 +454,7 @@ export function OrdersList() {
                             }
                             {
                                 auth.role !== "ADMIN" &&
-                                <Button id="plus-button"><Plus size="35px"/></Button>
+                                <Button id="plus-button" onClick={() => {navigate("/new-order")}}><Plus size="35px"/></Button>
                             }
                             <Pagination>
                                 <Pagination.Prev key="prev" onClick={() => {
@@ -381,9 +472,6 @@ export function OrdersList() {
 
                                 setElementsOnPage(value)
 
-                                // TODO: call backend for new total
-
-                                setTotalPages(15)
                                 setCurrentPage(1)
                             }}>
                                 <option value="10" key={10}>10 / page</option>
@@ -409,7 +497,7 @@ export function OrdersList() {
                                     <div>Статус</div>
                                     <div className="sort-filter">
                                         <TableSort sortState={sortState} setSortState={setSortState} sortName="state"/>
-                                        <SelectFilter filterData={statusFilter} setFilterData={setStatusFilter}/>
+                                        <SelectFilter filterData={stateFilter} setFilterData={setStateFilter}/>
                                     </div>
                                 </div>
                             </th>

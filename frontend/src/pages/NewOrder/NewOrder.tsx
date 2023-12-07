@@ -1,14 +1,47 @@
 import "./NewOrder.scss";
 import Header from "../../components/Header/Header";
-import {EmojiSmileUpsideDown} from "react-bootstrap-icons";
-import {Button, Col, Form, Row} from "react-bootstrap";
+import {EmojiSmileUpsideDown, ExclamationTriangle} from "react-bootstrap-icons";
+import {Alert, Button, Col, Form, Row} from "react-bootstrap";
 import {useAppDispatch, useAppSelector} from "../../hooks";
 import {useCookies} from "react-cookie";
 import {setUser} from "../../features/auth/authSlice";
-import {Navigate} from "react-router-dom";
-import {useRef} from "react";
+import {Navigate, useNavigate} from "react-router-dom";
+import React, {useEffect, useRef, useState} from "react";
+import axios from "axios";
+import {HttpStatusCode} from "axios/index";
 
 export function NewOrder() {
+
+    const navigate = useNavigate();
+
+    let [isAlertShown, setAlertShown] = useState(false);
+    let [isAlert1Shown, setAlert1Shown] = useState(false);
+
+    let [branchesArray, setBranchesArray] = useState<string[]>([]);
+    let [clientsArray, setClientsArray] = useState<string[]>([]);
+
+    async function loadAll() {
+        await axios.get("/api/branch/all_compact", {
+            baseURL: "http://localhost:8080"
+        }).then(async (response) => {
+            setBranchesArray(response.data.branches)
+        }).catch((error) => {
+            console.log(error)
+        })
+
+        await axios.get("/api/client/all_compact", {
+            baseURL: "http://localhost:8080"
+        }).then(async (response) => {
+            setClientsArray(response.data.clients)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+
+    useEffect(() => {
+        loadAll();
+    }, []);
+
     let serviceArray = [
         "Стирка",
         "Сушка",
@@ -19,7 +52,7 @@ export function NewOrder() {
 
     let branchRef = useRef<HTMLSelectElement>(null);
     let clientRef = useRef<HTMLSelectElement>(null);
-    let scheduleRef = useRef<{
+    let servicesRef = useRef<{
         checkbox: HTMLInputElement | null,
         value: HTMLInputElement | null,
     }[]>([]);
@@ -45,14 +78,84 @@ export function NewOrder() {
         return <Navigate to="/not-found" replace={true}/>
     }
 
+    function createAlert(setAlertShown: React.Dispatch<React.SetStateAction<boolean>>) {
+        setAlertShown(true);
+        setTimeout(() => {setAlertShown(false);}, 3000);
+    }
 
-    function submitCreation() {
+    async function submitCreation() {
 
+        if (auth.role === "CLIENT") {
+            if (branchesArray.length === 0) {
+                createAlert(setAlert1Shown);
+                return;
+            }
+        } else {
+            if (branchesArray.length === 0 || clientsArray.length === 0) {
+                createAlert(setAlert1Shown);
+                return;
+            }
+        }
+
+
+        let anyChecked = false;
+
+        for (const data of servicesRef.current) {
+            if (data.checkbox !== null && data.value !== null && data.value.value !== "") {
+                anyChecked = true;
+                break;
+            }
+        }
+
+        if (!anyChecked) {
+            createAlert(setAlertShown);
+            return;
+        }
+
+        let serviceName = [
+            "WASHING",
+            "DRYING",
+            "IRONING",
+            "POWDER",
+            "BLEACH"
+        ]
+
+        let services: { type: string, count: number }[] = [];
+
+        for (let i = 0; i < servicesRef.current.length; i++) {
+            let data = servicesRef.current[i];
+
+            if (data.checkbox !== null && data.value !== null && data.value.value !== "") {
+                services.push({
+                    type: serviceName[i],
+                    count: parseInt(data.value.value)
+                })
+            }
+        }
+
+        let clientName = auth.name;
+
+        if (auth.role === "SUPERUSER") {
+            clientName = clientRef.current!.value;
+        }
+
+        // Create new branch
+        await axios.post("/api/order/create", {
+            branch: branchRef.current!.value,
+            clientName: clientName,
+            services: services
+        },{
+            baseURL: "http://localhost:8080"
+        }).then(() => {
+            navigate("/orders-list");
+        }).catch((error) => {
+            console.log(error)
+        })
     }
 
     return (
         <div id="new-warehouse-wrapper">
-            <Header title="Создание склада"/>
+            <Header title="Создание заказа"/>
 
             <div id="content-wrapper">
                 <div id="window">
@@ -60,14 +163,18 @@ export function NewOrder() {
                     <Form>
                         <div>
                             <Form.Label>
-                                Филиал
+                                <div>
+                                    Филиал
+                                </div>
+                                <div className="star">
+                                    *
+                                </div>
                             </Form.Label>
                             <Col>
-                                <Form.Select ref={branchRef}>
-                                    <option value="123">KEK123</option>
-                                    <option value="1">KEK1</option>
-                                    <option value="2">KEK2</option>
-                                    <option value="3">KEK3</option>
+                                <Form.Select ref={branchRef} disabled={branchesArray.length === 0}>
+                                    {branchesArray.map((value) =>
+                                        <option key={value} value={value}>{value}</option>
+                                    )}
                                 </Form.Select>
                             </Col>
                         </div>
@@ -77,14 +184,18 @@ export function NewOrder() {
 
                             <div>
                                 <Form.Label>
-                                    Клиент
+                                    <div>
+                                        Клиент
+                                    </div>
+                                    <div className="star">
+                                        *
+                                    </div>
                                 </Form.Label>
                                 <Col>
-                                    <Form.Select ref={clientRef}>
-                                        <option value="123">KEK123</option>
-                                        <option value="1">KEK1</option>
-                                        <option value="2">KEK2</option>
-                                        <option value="3">KEK3</option>
+                                    <Form.Select ref={clientRef} disabled={clientsArray.length === 0}>
+                                        {clientsArray.map((value) =>
+                                            <option key={value} value={value}>{value}</option>
+                                        )}
                                     </Form.Select>
                                 </Col>
                             </div>
@@ -92,7 +203,12 @@ export function NewOrder() {
 
                         <div id="services">
                             <Form.Label>
-                                Услуги
+                                <div>
+                                    Услуги
+                                </div>
+                                <div className="star">
+                                    *
+                                </div>
                             </Form.Label>
 
 
@@ -100,25 +216,25 @@ export function NewOrder() {
                                 serviceArray.map((value, index) =>
                                     <div className="list-element" key={value}>
                                         <Form.Check ref={(ref: HTMLInputElement) => {
-                                            if (scheduleRef.current[index] === undefined) {
-                                                scheduleRef.current[index] = {
+                                            if (servicesRef.current[index] === undefined) {
+                                                servicesRef.current[index] = {
                                                     checkbox: ref,
                                                     value: null
                                                 }
                                             } else {
-                                                scheduleRef.current[index].checkbox = ref
+                                                servicesRef.current[index].checkbox = ref
                                             }
                                         }}/>
                                         <div className="name">{value}</div>
                                         <div className="input">
                                             <Form.Control placeholder="Введите количество" ref={(ref: HTMLInputElement) => {
-                                                if (scheduleRef.current[index] === undefined) {
-                                                    scheduleRef.current[index] = {
+                                                if (servicesRef.current[index] === undefined) {
+                                                    servicesRef.current[index] = {
                                                         checkbox: null,
                                                         value: ref
                                                     }
                                                 } else {
-                                                    scheduleRef.current[index].value = ref
+                                                    servicesRef.current[index].value = ref
                                                 }
                                             }}/>
                                         </div>
@@ -131,10 +247,20 @@ export function NewOrder() {
 
                         <div className="buttons">
                             <Button onClick={() => submitCreation()}>Создать</Button>
-                            <Button>Отмена</Button>
+                            <Button onClick={() => navigate(-1)}>Отмена</Button>
                         </div>
                     </Form>
                 </div>
+
+                <Alert className="custom-alert" variant="danger" show={isAlertShown}>
+                    <ExclamationTriangle/>
+                    <>Вы не заполнили все обязательные поля!</>
+                </Alert>
+                <Alert className="custom-alert" variant="danger" show={isAlert1Shown}>
+                    <ExclamationTriangle/>
+                    <>Минимум одно обязательно поле недоступно! Продолжение невозможно!</>
+                </Alert>
+
             </div>
 
         </div>
