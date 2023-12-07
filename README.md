@@ -1,5 +1,13 @@
 # nosql_template
 
+## Предустановленные пользователи
+
+Для удобства пользования прототипами были введены вследующие пользователи:
+
+- Клиент 			(Login: **Client**, 	Password: **Password**)
+- Администратор 	(Login: **Admin**, 		Password: **Password**)
+- Директор 			(Login: **Director**, 	Password: **Password**)
+- Владелец бизнеса 	(Login: **Superuser**, 	Password: **Password**)
 
 ## Предварительная проверка заданий
 
