@@ -1,25 +1,28 @@
 package com.example.springtest.model.relationships;
 
-import com.example.springtest.model.Service;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.example.springtest.model.Product;
+import lombok.*;
 import org.springframework.data.neo4j.core.schema.RelationshipId;
 import org.springframework.data.neo4j.core.schema.RelationshipProperties;
 import org.springframework.data.neo4j.core.schema.TargetNode;
 
+import java.time.ZonedDateTime;
+
 @RelationshipProperties
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Getter
 @Setter
-public class Contains {
+public class Removed {
+
     @RelationshipId
     private Long id;
 
     @TargetNode
-    private Service service;
+    private Product product;
 
     private int amount;
+
+    private ZonedDateTime creationDate;
 }

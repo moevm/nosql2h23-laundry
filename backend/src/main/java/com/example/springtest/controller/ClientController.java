@@ -1,7 +1,6 @@
 package com.example.springtest.controller;
 
 import com.example.springtest.dto.client.*;
-import com.example.springtest.model.Branch;
 import com.example.springtest.model.Client;
 import com.example.springtest.model.User;
 import com.example.springtest.service.ClientService;

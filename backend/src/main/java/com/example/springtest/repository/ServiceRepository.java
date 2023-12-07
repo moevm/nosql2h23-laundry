@@ -4,11 +4,13 @@ import com.example.springtest.model.Service;
 import com.example.springtest.model.types.ServiceType;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Repository
 public interface ServiceRepository extends Neo4jRepository<Service, UUID> {
 
     @Query("MATCH (s:Service) " +

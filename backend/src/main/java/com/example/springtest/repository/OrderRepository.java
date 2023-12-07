@@ -1,18 +1,18 @@
 package com.example.springtest.repository;
 
-import com.example.springtest.model.Client;
 import com.example.springtest.model.Order;
 import com.example.springtest.model.types.OrderState;
 import com.example.springtest.model.types.ServiceType;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
+import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+@Repository
 public interface OrderRepository extends Neo4jRepository<Order, UUID> {
 
     @Query("MATCH (c:Client {fullName: $client}) " +
@@ -25,6 +25,13 @@ public interface OrderRepository extends Neo4jRepository<Order, UUID> {
             "MATCH (service:Service {type: $type}) " +
             "CREATE (o)-[:CONTAINS {amount: $count}]->(service)")
     void connectServiceWithOrder(UUID id, ServiceType type, int count);
+
+    @Query("MATCH (o:Order {id: $id})-[ob:ORDERED_BY]->(c:Client) " +
+            "MATCH (o)-[eb:EXECUTED_BY]->(b:Branch) " +
+            "MATCH (o)-[co:CONTAINS]->(service:Service) " +
+            "WHERE o.creationDate >= $start AND o.creationDate <= $end AND o.state IN $possibleStates AND b.address CONTAINS $branch " +
+            "RETURN o, ob, c, eb, b, collect(co), collect(service)")
+    Optional<Order> findOrderById(UUID id);
 
     @Query("MATCH (o:Order)-[ob:ORDERED_BY]->(c:Client) " +
             "MATCH (o)-[eb:EXECUTED_BY]->(b:Branch) " +
@@ -55,4 +62,14 @@ public interface OrderRepository extends Neo4jRepository<Order, UUID> {
             "WHERE o.creationDate >= $start AND o.creationDate <= $end AND o.state IN $possibleStates AND b.address CONTAINS $branch " +
             "RETURN o, ob, c, eb, b, collect(co), collect(service)")
     List<Order> getTotalCountForClient(ZonedDateTime start, ZonedDateTime end, List<OrderState> possibleStates, String branch, String clientId);
+
+    @Query("MATCH (o:Order {state: $oldState}) " +
+            "WHERE o.id IN $idList " +
+            "SET o.state = $newState")
+    void setNewStateForOrders(List<UUID> idList, OrderState oldState, OrderState newState);
+
+    @Query("MATCH (o:Order) " +
+            "WHERE o.id IN $idList " +
+            "SET o.state = 'CANCELED'")
+    void cancelOrders(List<UUID> list);
 }

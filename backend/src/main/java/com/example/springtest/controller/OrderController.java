@@ -1,17 +1,11 @@
 package com.example.springtest.controller;
 
 
-import com.example.springtest.dto.order.CreateOrderRequest;
-import com.example.springtest.dto.order.GetAllRequest;
-import com.example.springtest.dto.order.GetAllResponse;
-import com.example.springtest.dto.order.GetTotalOrdersCountRequest;
+import com.example.springtest.dto.order.*;
 import com.example.springtest.model.Order;
 import com.example.springtest.service.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -19,10 +13,14 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequiredArgsConstructor
-// TODO: check if works
 public class OrderController {
 
     private final OrderService orderService;
+
+    @GetMapping("/api/order/get")
+    public GetOrderResponse getOrder(@RequestParam("id") String id) {
+        return orderService.findOrderById(id);
+    }
 
     @PostMapping("/api/order/create")
     public void createOrder(@RequestBody CreateOrderRequest request) {

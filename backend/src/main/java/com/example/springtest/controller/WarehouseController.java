@@ -1,7 +1,6 @@
 package com.example.springtest.controller;
 
 
-import com.example.springtest.dto.branch.CreateBranchRequest;
 import com.example.springtest.dto.employee.GetDirectorsWithoutBranchResponse;
 import com.example.springtest.dto.warehouse.*;
 import com.example.springtest.model.Warehouse;
@@ -9,6 +8,7 @@ import com.example.springtest.service.WarehouseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +27,28 @@ public class WarehouseController {
         return GetDirectorsWithoutBranchResponse.builder().names(
                 warehouses.stream().map(Warehouse::getAddress).toList()
         ).build();
+
+    }
+
+    @GetMapping("api/warehouse/get")
+    public GetWarehouseResponse getWarehousesWithoutBranch(@RequestParam("id") String warehouseId) {
+
+        Warehouse warehouse = warehouseService.findWarehouseById(warehouseId);
+
+        return GetWarehouseResponse.builder()
+                .address(warehouse.getAddress())
+                .branchId(warehouse.getBranch().getId().toString())
+                .branchAddress(warehouse.getBranch().getAddress())
+                .schedule(warehouse.getSchedule())
+                .products(warehouse.getProducts().stream().map((
+                        store -> GetWarehouseResponse.ProductData.builder()
+                                .type(store.getProduct().getType().toString())
+                                .amount(store.getAmount())
+                                .build()
+                )).toList())
+                .creationDate(warehouse.getCreationDate().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+                .editDate(warehouse.getEditDate().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+                .build();
 
     }
 

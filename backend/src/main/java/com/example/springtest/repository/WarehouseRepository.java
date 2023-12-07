@@ -3,14 +3,21 @@ package com.example.springtest.repository;
 import com.example.springtest.model.Warehouse;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
+import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Repository
 public interface WarehouseRepository extends Neo4jRepository<Warehouse, UUID> {
+
+    @Query("MATCH (w:Warehouse {id: $id}) " +
+            "MATCH (w)<-[sup:SUPPLIED_BY]-(b:Branch) " +
+            "OPTIONAL MATCH (w)-[st:STORE]->(pr:Product) " +
+            "RETURN w, sup, b, collect(st), collect(pr)")
+    Optional<Warehouse> findWarehouseById(UUID id);
 
     // Mapping everything here is not necessary
     @Query("MATCH (w:Warehouse) " +

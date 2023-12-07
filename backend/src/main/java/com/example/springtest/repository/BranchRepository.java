@@ -3,12 +3,14 @@ package com.example.springtest.repository;
 import com.example.springtest.model.Branch;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
+import org.springframework.stereotype.Repository;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Repository
 public interface BranchRepository extends Neo4jRepository<Branch, UUID> {
 
     @Query("MATCH (b:Branch) " +
@@ -20,6 +22,14 @@ public interface BranchRepository extends Neo4jRepository<Branch, UUID> {
             "SKIP $skip " +
             "LIMIT $elementsOnPage")
     List<Branch> getAllBranches(String address, String warehouse, String director, int elementsOnPage, int skip);
+
+    @Query("MATCH (b:Branch) " +
+            "OPTIONAL MATCH (b)<-[eb:EXECUTED_BY]-(o:Order) " +
+            "OPTIONAL MATCH (b)-[sb:SUPPLIED_BY]->(w:Warehouse) " +
+            "RETURN b, collect(eb), collect(o), sb, w" +
+            "SKIP $skip " +
+            "LIMIT $elementsOnPage")
+    List<Branch> getAllBranches(int elementsOnPage, int skip);
 
     @Query("MATCH (b:Branch) " +
             "MATCH (b)<-[adm:ADMINISTERS]-(admin:Employee) " +

@@ -1,4 +1,4 @@
-package com.example.springtest.dto.employee;
+package com.example.springtest.dto.warehouse;
 
 import lombok.*;
 
@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetAllResponse {
+public class AddProductsRequest {
 
     @Builder
     @AllArgsConstructor
@@ -18,16 +18,14 @@ public class GetAllResponse {
     @Setter
     public static class Data {
 
-        private String id;
-
         private String name;
 
-        private String role;
-
-        private String phone;
+        private int count;
 
     }
 
-    private List<Data> data;
+    private String warehouse;
+
+    private List<Data> products;
 
 }

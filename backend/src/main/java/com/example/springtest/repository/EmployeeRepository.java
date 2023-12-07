@@ -6,7 +6,6 @@ import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +27,16 @@ public interface EmployeeRepository extends Neo4jRepository<Employee, UUID> {
             "RETURN e, ad, b1, man1, b, man2, w, collect(op), collect(sh), collect(rec), collect(sal) " +
             "LIMIT 1")
     Optional<Employee> findByLogin(String login);
+
+    @Query("MATCH (e:Employee {id: $id}) " +
+            "OPTIONAL MATCH (e)-[ad:ADMINISTERS]->(b:Branch) " +
+            "OPTIONAL MATCH (e)-[man1:MANAGE]->(b1:Branch) " +
+            "OPTIONAL MATCH (e)-[man2:MANAGE]->(w:Warehouse) " +
+            "OPTIONAL MATCH (e)<-[op:OPENED_BY]-(sh:Shift) " +
+            "OPTIONAL MATCH (e)<-[rec:RECEIVED_BY]-(sal:Salary) " +
+            "RETURN e, ad, b1, man1, b, man2, w, collect(op), collect(sh), collect(rec), collect(sal) " +
+            "LIMIT 1")
+    Optional<Employee> findEmployeeById(UUID id);
 
 
     @Query("MATCH (e:Employee {role: 'DIRECTOR'}) " +
@@ -53,6 +62,17 @@ public interface EmployeeRepository extends Neo4jRepository<Employee, UUID> {
     List<Employee> getAllEmployees(String name, String phone, List<UserRole> possibleRoles, int elementsOnPage, int skip);
 
     @Query("MATCH (e:Employee) " +
+            "OPTIONAL MATCH (e)-[ad:ADMINISTERS]->(b:Branch) " +
+            "OPTIONAL MATCH (e)-[man1:MANAGE]->(b1:Branch) " +
+            "OPTIONAL MATCH (e)-[man2:MANAGE]->(w:Warehouse) " +
+            "OPTIONAL MATCH (e)<-[op:OPENED_BY]-(sh:Shift) " +
+            "OPTIONAL MATCH (e)<-[rec:RECEIVED_BY]-(sal:Salary) " +
+            "RETURN e, ad, b, man1, b1, man2, w, collect(op), collect(sh), collect(rec), collect(sal) " +
+            "SKIP $skip " +
+            "LIMIT $elementsOnPage")
+    List<Employee> findAllEmployees(int elementsOnPage, int skip);
+
+    @Query("MATCH (e:Employee) " +
             "WHERE e.fullName CONTAINS $name AND e.phone CONTAINS $phone AND e.role IN $possibleRoles " +
             "RETURN count(e)")
     int getTotalCount(String name, String phone, List<UserRole> possibleRoles);
@@ -62,4 +82,6 @@ public interface EmployeeRepository extends Neo4jRepository<Employee, UUID> {
             "WHERE e.id IN $idList " +
             "DETACH DELETE e")
     void deleteEmployees(List<UUID> idList);
+
+
 }

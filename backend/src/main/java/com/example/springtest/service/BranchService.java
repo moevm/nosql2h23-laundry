@@ -1,12 +1,11 @@
 package com.example.springtest.service;
 
-import com.example.springtest.dto.branch.CreateBranchRequest;
-import com.example.springtest.dto.branch.GetAllRequest;
-import com.example.springtest.dto.branch.GetTotalBranchesCountRequest;
+import com.example.springtest.dto.branch.*;
 import com.example.springtest.exceptions.controller.BranchAlreadyExistsException;
 import com.example.springtest.model.Branch;
-import com.example.springtest.model.Employee;
+import com.example.springtest.model.Order;
 import com.example.springtest.model.Warehouse;
+import com.example.springtest.model.types.OrderState;
 import com.example.springtest.repository.BranchRepository;
 import com.example.springtest.repository.EmployeeRepository;
 import com.example.springtest.repository.WarehouseRepository;
@@ -14,13 +13,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +27,8 @@ public class BranchService {
     private final BranchRepository branchRepository;
     private final WarehouseRepository warehouseRepository;
     private final EmployeeRepository employeeRepository;
+
+    final static DateTimeFormatter formatter = DateTimeFormatter.RFC_1123_DATE_TIME;
 
     @Transactional
     public List<Branch> getAllBranches() {
@@ -113,5 +113,80 @@ public class BranchService {
     @Transactional
     public List<Branch> findBranchesWithoutWarehouse() {
         return branchRepository.findBranchesWithoutWarehouse();
+    }
+
+    @Transactional
+    public CalculateBranchesProfitResponse calculateProfit(CalculateBranchesProfitRequest request) {
+
+        ZonedDateTime start = ZonedDateTime.parse(request.getStartDate(), formatter);
+
+        ZonedDateTime end = ZonedDateTime.parse(request.getEndDate(), formatter).plusDays(1).minusSeconds(1);
+
+        List<CalculateBranchesProfitResponse.Data> dataList = new ArrayList<>();
+
+        List<Branch> branchList = branchRepository.getAllBranches(request.getElementsOnPage(), request.getElementsOnPage() * (request.getPage() - 1));
+
+        for (Branch branch : branchList) {
+            float income = (float) branch.getOrders().stream().filter((order ->
+                    (order.getCreationDate().equals(start) || order.getCreationDate().isAfter(start)) &&
+                            (order.getCreationDate().equals(end) || order.getCreationDate().isBefore(end))
+            )).mapToDouble(Order::getPrice).sum();
+
+            float spending = (float) warehouseRepository.findById(branch.getWarehouse().getId()).get().getRemovedProducts().stream()
+                    .filter(removed ->
+                            (removed.getCreationDate().equals(start) || removed.getCreationDate().isAfter(start)) &&
+                                    (removed.getCreationDate().equals(end) || removed.getCreationDate().isBefore(end))
+                    )
+                    .mapToDouble(removed -> removed.getAmount() * removed.getProduct().getPrice())
+                    .sum();
+
+            dataList.add(CalculateBranchesProfitResponse.Data.builder()
+                    .branchId(branch.getId().toString())
+                    .branchAddress(branch.getAddress())
+                    .income(income)
+                    .spending(spending)
+                    .profit(income - spending)
+                    .build());
+        }
+
+        return new CalculateBranchesProfitResponse(dataList);
+    }
+
+    @Transactional
+    public CalculateBranchesLoadResponse calculateLoad(CalculateBranchesLoadRequest request) {
+        ZonedDateTime start = ZonedDateTime.parse(request.getStartDate(), formatter);
+
+        ZonedDateTime end = ZonedDateTime.parse(request.getEndDate(), formatter).plusDays(1).minusSeconds(1);
+
+        List<CalculateBranchesLoadResponse.Data> dataList = new ArrayList<>();
+
+        List<Branch> branchList = branchRepository.getAllBranches(request.getElementsOnPage(), request.getElementsOnPage() * (request.getPage() - 1));
+
+        for (Branch branch : branchList) {
+            int servicesCompleted = branch.getOrders().stream()
+                    .filter((order ->
+                            (order.getCreationDate().equals(start) || order.getCreationDate().isAfter(start)) &&
+                                    (order.getCreationDate().equals(end) || order.getCreationDate().isBefore(end))
+                    ))
+                    .filter(order -> order.getState().equals(OrderState.COMPLETED))
+                    .mapToInt(order -> order.getServices().size()).sum();
+
+            float spentProductsCoefficient = (float) warehouseRepository.findById(branch.getWarehouse().getId()).get().getRemovedProducts().stream()
+                    .filter(removed ->
+                            (removed.getCreationDate().equals(start) || removed.getCreationDate().isAfter(start)) &&
+                                    (removed.getCreationDate().equals(end) || removed.getCreationDate().isBefore(end))
+                    )
+                    .mapToDouble(removed -> removed.getAmount() * removed.getProduct().getPrice() / 100)
+                    .sum();
+
+            dataList.add(CalculateBranchesLoadResponse.Data.builder()
+                    .branchId(branch.getId().toString())
+                    .branchAddress(branch.getAddress())
+                    .spentProductsCoefficient(spentProductsCoefficient)
+                    .servicesCompleted(servicesCompleted)
+                    .build());
+        }
+
+        return new CalculateBranchesLoadResponse(dataList);
     }
 }
