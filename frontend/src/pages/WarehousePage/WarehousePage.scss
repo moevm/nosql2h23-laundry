@@ -1,0 +1,120 @@
+#warehouse-page-wrapper {
+  display: flex;
+  flex-direction: column;
+
+  height: 100vh;
+
+  background: linear-gradient(180deg, #CFF4FC 30.32%, #FFF 81.32%);
+
+
+  #content-wrapper {
+
+    display: flex;
+    flex-direction: row;
+
+    padding: 60px 250px;
+
+    justify-content: center;
+    align-items: center;
+
+    flex: 1 0 0;
+
+    #window {
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+
+      flex: 1 0 0;
+
+      min-width: 800px;
+
+      padding: 5px 5px;
+
+      border-radius: 25px;
+      background: #c6f2ae;
+
+      font-size: 25px;
+
+      #top {
+        display: flex;
+        padding: 10px 44px 10px 10px;
+        align-items: flex-start;
+        gap: 10px;
+        align-self: stretch;
+
+        #data {
+          display: flex;
+          padding: 10px;
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+
+          flex: 1 0 0;
+
+          .bold {
+            font-weight: 550;
+          }
+
+          .data-part-lin {
+            display: flex;
+            padding: 10px;
+            align-items: baseline;
+            gap: 10px;
+            align-self: stretch;
+          }
+
+          #big-part {
+            display: flex;
+            padding: 10px;
+            align-items: center;
+            gap: 70px;
+            align-self: stretch;
+
+            .data-part-hor-main {
+              display: flex;
+              padding: 10px 10px 10px 0px;
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 10px;
+            }
+          }
+        }
+
+        #control-btns {
+          display: flex;
+          width: 20%;
+          padding: 67px 0 85px 0;
+          flex-direction: column;
+          align-items: center;
+          gap: 35px;
+          align-self: stretch;
+
+          .btn {
+            width: 100%;
+          }
+        }
+
+      }
+
+      #bottom {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-end;
+        align-self: stretch;
+
+        padding: 10px 15px;
+
+        .date {
+          display: flex;
+          flex-direction: row;
+          gap: 10px;
+
+          font-size: 15px;
+        }
+      }
+    }
+  }
+}

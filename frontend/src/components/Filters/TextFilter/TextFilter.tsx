@@ -30,11 +30,12 @@ export function TextFilter(props: textFilterProps) {
         /**
          * Alert if clicked on outside of element
          */
-        function handleClickOutside(event:any) {
+        function handleClickOutside(event: any) {
             if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
                 setWindowOpen(false);
             }
         }
+
         // Bind the event listener
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
@@ -53,7 +54,7 @@ export function TextFilter(props: textFilterProps) {
                 onClick={() => setWindowOpen(!isWindowOpen)}
             />
 
-            { isWindowOpen &&
+            {isWindowOpen &&
                 <div className="settings-window" ref={wrapperRef}>
                     <Form.Label>Поиск</Form.Label>
                     <Form.Control

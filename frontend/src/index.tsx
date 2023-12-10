@@ -4,10 +4,7 @@ import 'react-calendar/dist/Calendar.css';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {
-    createBrowserRouter,
-    RouterProvider
-} from "react-router-dom";
+import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {App} from './App';
 import {NotFound} from "./pages/NotFound/NotFound";
 import {SignIn} from "./pages/SignIn/SignIn";
@@ -26,6 +23,14 @@ import {NewOrder} from "./pages/NewOrder/NewOrder";
 
 import {Provider} from "react-redux";
 import store from "./store";
+import {WarehousePage} from "./pages/WarehousePage/WarehousePage";
+import {AddProducts} from "./pages/AddProducts/AddProducts";
+import {RemoveProducts} from "./pages/RemoveProducts/RemoveProducts";
+import {ImportExport} from "./pages/ImportExport/ImportExport";
+import {UserPage} from "./pages/UserPage/UserPage";
+import {OrderPage} from "./pages/OrderPage/OrderPage";
+import {SalaryCalc} from "./pages/SalaryCalc/SalaryCalc";
+import {IncomeCalc} from "./pages/IncomeCalc/IncomeCalc";
 
 const router = createBrowserRouter([
     {
@@ -88,6 +93,38 @@ const router = createBrowserRouter([
     {
         path: "/new-order",
         element: <NewOrder/>
+    },
+    {
+        path: "/warehouse-page/:warehouseId",
+        element: <WarehousePage/>
+    },
+    {
+        path: "/warehouse-page/:warehouseId/add-products",
+        element: <AddProducts/>
+    },
+    {
+        path: "/warehouse-page/:warehouseId/remove-products",
+        element: <RemoveProducts/>
+    },
+    {
+        path: "/import-export",
+        element: <ImportExport/>
+    },
+    {
+        path: "/user-page/:userId",
+        element: <UserPage/>
+    },
+    {
+        path: "/order-page/:orderId",
+        element: <OrderPage/>
+    },
+    {
+        path: "/salary-calc",
+        element: <SalaryCalc/>
+    },
+    {
+        path: "/income-calc",
+        element: <IncomeCalc/>
     }
 ]);
 

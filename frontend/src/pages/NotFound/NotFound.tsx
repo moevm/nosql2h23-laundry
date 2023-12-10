@@ -1,5 +1,5 @@
 import "./NotFound.scss";
-import {useNavigate, useRouteError} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import Header from "../../components/Header/Header";
 import {EmojiSmileUpsideDown} from "react-bootstrap-icons";
 import {Button} from "react-bootstrap";
@@ -20,7 +20,9 @@ export function NotFound() {
 
                 <EmojiSmileUpsideDown size={128}/>
 
-                <Button size={"lg"} onClick={() => {navigate("/main_page", {replace: true})}}>Вернуться на главный экран</Button>
+                <Button size={"lg"} onClick={() => {
+                    navigate("/main_page", {replace: true})
+                }}>Вернуться на главный экран</Button>
             </div>
 
         </div>
