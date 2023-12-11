@@ -13,7 +13,7 @@ export default function UserIcon() {
     const navigate = useNavigate();
 
     const dispatch = useAppDispatch()
-    const [,, removeCookie] = useCookies(['auth']);
+    const [, , removeCookie] = useCookies(['auth']);
 
     function toggleDropdown() {
         showDropDown(!isDropdownShown);
@@ -23,11 +23,12 @@ export default function UserIcon() {
 
     const wrapperRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
-        function handleClickOutside(event:any) {
+        function handleClickOutside(event: any) {
             if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
                 showDropDown(false)
             }
         }
+
         // Bind the event listener
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
@@ -42,7 +43,7 @@ export default function UserIcon() {
         <div id="user-icon">
             <Image id="user_icon" src="" alt="Icon" onClick={toggleDropdown}/>
 
-            { isDropdownShown &&
+            {isDropdownShown &&
                 <div id="dropdown-actions" ref={wrapperRef}>
                     <div className="dropdown-element" onClick={() => {
                         navigate("/user/" + auth.id)

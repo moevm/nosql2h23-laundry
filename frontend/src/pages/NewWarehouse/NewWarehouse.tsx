@@ -1,7 +1,7 @@
 import "./NewWarehouse.scss";
 import Header from "../../components/Header/Header";
-import {EmojiSmileUpsideDown, ExclamationTriangle} from "react-bootstrap-icons";
-import {Alert, Button, Col, Form, Row} from "react-bootstrap";
+import {ExclamationTriangle} from "react-bootstrap-icons";
+import {Alert, Button, Col, Form} from "react-bootstrap";
 import {useAppDispatch, useAppSelector} from "../../hooks";
 import {useCookies} from "react-cookie";
 import {setUser} from "../../features/auth/authSlice";
@@ -74,7 +74,9 @@ export function NewWarehouse() {
 
     function createAlert(setAlertShown: React.Dispatch<React.SetStateAction<boolean>>) {
         setAlertShown(true);
-        setTimeout(() => {setAlertShown(false);}, 3000);
+        setTimeout(() => {
+            setAlertShown(false);
+        }, 3000);
     }
 
     async function submitCreation() {
@@ -121,7 +123,7 @@ export function NewWarehouse() {
             address: addressRef.current!.value,
             branchAddress: branchRef.current!.value,
             schedule: schedule
-        },{
+        }, {
             baseURL: "http://localhost:8080"
         }).then(() => {
             navigate("/warehouses-list");
@@ -155,7 +157,7 @@ export function NewWarehouse() {
                             </Form.Label>
                             <Col>
                                 <Form.Control placeholder="Введите адрес склада"
-                                    ref={addressRef}
+                                              ref={addressRef}
                                 />
                             </Col>
                         </div>

@@ -1,14 +1,13 @@
 import "./NewOrder.scss";
 import Header from "../../components/Header/Header";
-import {EmojiSmileUpsideDown, ExclamationTriangle} from "react-bootstrap-icons";
-import {Alert, Button, Col, Form, Row} from "react-bootstrap";
+import {ExclamationTriangle} from "react-bootstrap-icons";
+import {Alert, Button, Col, Form} from "react-bootstrap";
 import {useAppDispatch, useAppSelector} from "../../hooks";
 import {useCookies} from "react-cookie";
 import {setUser} from "../../features/auth/authSlice";
 import {Navigate, useNavigate} from "react-router-dom";
 import React, {useEffect, useRef, useState} from "react";
 import axios from "axios";
-import {HttpStatusCode} from "axios/index";
 
 export function NewOrder() {
 
@@ -80,7 +79,9 @@ export function NewOrder() {
 
     function createAlert(setAlertShown: React.Dispatch<React.SetStateAction<boolean>>) {
         setAlertShown(true);
-        setTimeout(() => {setAlertShown(false);}, 3000);
+        setTimeout(() => {
+            setAlertShown(false);
+        }, 3000);
     }
 
     async function submitCreation() {
@@ -144,7 +145,7 @@ export function NewOrder() {
             branch: branchRef.current!.value,
             clientName: clientName,
             services: services
-        },{
+        }, {
             baseURL: "http://localhost:8080"
         }).then(() => {
             navigate("/orders-list");
@@ -227,16 +228,17 @@ export function NewOrder() {
                                         }}/>
                                         <div className="name">{value}</div>
                                         <div className="input">
-                                            <Form.Control placeholder="Введите количество" ref={(ref: HTMLInputElement) => {
-                                                if (servicesRef.current[index] === undefined) {
-                                                    servicesRef.current[index] = {
-                                                        checkbox: null,
-                                                        value: ref
-                                                    }
-                                                } else {
-                                                    servicesRef.current[index].value = ref
-                                                }
-                                            }}/>
+                                            <Form.Control placeholder="Введите количество"
+                                                          ref={(ref: HTMLInputElement) => {
+                                                              if (servicesRef.current[index] === undefined) {
+                                                                  servicesRef.current[index] = {
+                                                                      checkbox: null,
+                                                                      value: ref
+                                                                  }
+                                                              } else {
+                                                                  servicesRef.current[index].value = ref
+                                                              }
+                                                          }}/>
                                         </div>
                                     </div>
                                 )

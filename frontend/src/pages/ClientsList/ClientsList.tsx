@@ -1,7 +1,7 @@
 import "./ClientsList.scss";
 import Header from "../../components/Header/Header";
-import {Button, Pagination, Table, Form, Modal} from "react-bootstrap";
-import {Dot, Plus, Trash} from "react-bootstrap-icons";
+import {Button, Form, Modal, Pagination, Table} from "react-bootstrap";
+import {Plus, Trash} from "react-bootstrap-icons";
 import {JSX, useEffect, useRef, useState} from "react";
 import {TableSort} from "../../components/TableSort/TableSort";
 import {TextFilter} from "../../components/Filters/TextFilter/TextFilter";
@@ -37,7 +37,7 @@ export function ClientsList() {
 
             setTotalPages(parseInt(response.data))
 
-            await axios.get("/api/client/all",{
+            await axios.get("/api/client/all", {
                 baseURL: "http://localhost:8080",
                 params: {
                     name: nameFilter,
@@ -191,6 +191,7 @@ export function ClientsList() {
 
         return string;
     }
+
     function initEmailFilter() {
         let string = "";
 
@@ -278,7 +279,6 @@ export function ClientsList() {
     }
 
 
-
     async function deleteChecked() {
 
         let idsToDelete: string[] = [];
@@ -291,7 +291,7 @@ export function ClientsList() {
 
         await axios.post("/api/client/delete_list", {
             idList: idsToDelete
-        },{
+        }, {
             baseURL: "http://localhost:8080"
         }).then(() => {
             loadData();
@@ -310,8 +310,11 @@ export function ClientsList() {
                     <div id="controls">
                         <Button onClick={() => navigate(-1)}>Назад</Button>
                         <div id="controls-1">
-                            <Button id="trash-button" disabled={!anyChecked} onClick={() => setConfirmShown(true)}><Trash size="25px"/></Button>
-                            <Button id="plus-button" onClick={() => {navigate("/new-client")}}><Plus size="35px"/></Button>
+                            <Button id="trash-button" disabled={!anyChecked}
+                                    onClick={() => setConfirmShown(true)}><Trash size="25px"/></Button>
+                            <Button id="plus-button" onClick={() => {
+                                navigate("/new-client")
+                            }}><Plus size="35px"/></Button>
                             <Pagination>
                                 <Pagination.Prev key="prev" onClick={() => {
                                     if (currentPage !== 1)
@@ -377,7 +380,7 @@ export function ClientsList() {
                                     <td>{data.name}</td>
                                     <td>{data.email}</td>
                                     <td>
-                                        <Link to={"/user/" + data.id}>Открыть</Link>
+                                        <Link to={"/user-page/" + data.id}>Открыть</Link>
                                     </td>
                                 </tr>
                             )

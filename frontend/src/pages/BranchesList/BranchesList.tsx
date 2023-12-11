@@ -38,7 +38,7 @@ export function BranchesList() {
 
             setTotalPages(parseInt(response.data))
 
-            await axios.get("/api/branch/all",{
+            await axios.get("/api/branch/all", {
                 baseURL: "http://localhost:8080",
                 params: {
                     address: addressFilter,
@@ -145,10 +145,8 @@ export function BranchesList() {
     }, [currentPage, elementsOnPage]);
 
 
-
     let [searchParams, setSearchParams] = useSearchParams();
     const [sortState, setSortState] = useState("state_down");
-
 
 
     function initAddressFilter() {
@@ -160,6 +158,7 @@ export function BranchesList() {
 
         return string;
     }
+
     function initWarehouseFilter() {
         let string = "";
 
@@ -169,6 +168,7 @@ export function BranchesList() {
 
         return string;
     }
+
     function initDirectorFilter() {
         let string = "";
 
@@ -316,7 +316,6 @@ export function BranchesList() {
     }
 
 
-
     async function deleteChecked() {
 
         let idsToDelete: string[] = [];
@@ -329,7 +328,7 @@ export function BranchesList() {
 
         await axios.post("/api/branch/delete_list", {
             idList: idsToDelete
-        },{
+        }, {
             baseURL: "http://localhost:8080"
         }).then(() => {
             loadData();
@@ -353,8 +352,11 @@ export function BranchesList() {
                         <div id="controls-1">
                             <Button className="etc-button">Нагрузка</Button>
                             <Button className="etc-button">Прибыль</Button>
-                            <Button id="trash-button" disabled={!anyChecked} onClick={() => setConfirmShown(true)}><Trash size="25px"/></Button>
-                            <Button id="plus-button" onClick={() => {navigate("/new-branch")}}><Plus size="35px"/></Button>
+                            <Button id="trash-button" disabled={!anyChecked}
+                                    onClick={() => setConfirmShown(true)}><Trash size="25px"/></Button>
+                            <Button id="plus-button" onClick={() => {
+                                navigate("/new-branch")
+                            }}><Plus size="35px"/></Button>
                             <Pagination>
                                 <Pagination.Prev key="prev" onClick={() => {
                                     if (currentPage !== 1)
@@ -391,7 +393,8 @@ export function BranchesList() {
                                 <div>
                                     <div>Адрес</div>
                                     <div className="sort-filter">
-                                        <TableSort sortState={sortState} setSortState={setSortState} sortName="address"/>
+                                        <TableSort sortState={sortState} setSortState={setSortState}
+                                                   sortName="address"/>
                                         <TextFilter filterData={addressFilter} setFilterData={setAddressFilter}/>
                                     </div>
                                 </div>
@@ -400,7 +403,8 @@ export function BranchesList() {
                                 <div>
                                     <div>Склад</div>
                                     <div className="sort-filter">
-                                        <TableSort sortState={sortState} setSortState={setSortState} sortName="warehouse"/>
+                                        <TableSort sortState={sortState} setSortState={setSortState}
+                                                   sortName="warehouse"/>
                                         <TextFilter filterData={warehouseFilter} setFilterData={setWarehouseFilter}/>
                                     </div>
                                 </div>
@@ -409,7 +413,8 @@ export function BranchesList() {
                                 <div>
                                     <div>Директор</div>
                                     <div className="sort-filter">
-                                        <TableSort sortState={sortState} setSortState={setSortState} sortName="director"/>
+                                        <TableSort sortState={sortState} setSortState={setSortState}
+                                                   sortName="director"/>
                                         <TextFilter filterData={directorFilter} setFilterData={setDirectorFilter}/>
                                     </div>
                                 </div>
@@ -430,7 +435,7 @@ export function BranchesList() {
                                     <td>{data.warehouse}</td>
                                     <td>{data.director}</td>
                                     <td>
-                                        <Link to={"/branch/" + data.id}>Открыть</Link>
+                                        <Link to={"/branch-page/" + data.id}>Открыть</Link>
                                     </td>
                                 </tr>
                             )

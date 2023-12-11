@@ -1,7 +1,7 @@
 import "./EmployеesList.scss";
 import Header from "../../components/Header/Header";
-import {Button, Pagination, Table, Form, Modal} from "react-bootstrap";
-import {Dot, Plus, Trash} from "react-bootstrap-icons";
+import {Button, Form, Modal, Pagination, Table} from "react-bootstrap";
+import {Plus, Trash} from "react-bootstrap-icons";
 import {JSX, useEffect, useRef, useState} from "react";
 import {TableSort} from "../../components/TableSort/TableSort";
 import {TextFilter} from "../../components/Filters/TextFilter/TextFilter";
@@ -56,7 +56,7 @@ export function EmployeesList() {
             roles: roles,
             phone: phoneFilter,
             elementsOnPage: elementsOnPage
-        },{
+        }, {
             baseURL: "http://localhost:8080",
         }).then(async (response) => {
 
@@ -367,7 +367,7 @@ export function EmployeesList() {
 
         await axios.post("/api/employee/delete_list", {
             idList: idsToDelete
-        },{
+        }, {
             baseURL: "http://localhost:8080"
         }).then(() => {
             loadData();
@@ -387,8 +387,11 @@ export function EmployeesList() {
                         <Button onClick={() => navigate(-1)}>Назад</Button>
                         <div id="controls-1">
                             <Button id="calc-button">Расчитать ЗП</Button>
-                            <Button id="trash-button" disabled={!anyChecked} onClick={() => setConfirmShown(true)}><Trash size="25px"/></Button>
-                            <Button id="plus-button" onClick={() => {navigate("/new-employee")}}><Plus size="35px"/></Button>
+                            <Button id="trash-button" disabled={!anyChecked}
+                                    onClick={() => setConfirmShown(true)}><Trash size="25px"/></Button>
+                            <Button id="plus-button" onClick={() => {
+                                navigate("/new-employee")
+                            }}><Plus size="35px"/></Button>
                             <Pagination>
                                 <Pagination.Prev key="prev" onClick={() => {
                                     if (currentPage !== 1)
@@ -467,7 +470,7 @@ export function EmployeesList() {
                                     <td>{data.role}</td>
                                     <td>{data.phone}</td>
                                     <td>
-                                        <Link to={"/employee/" + data.id}>Открыть</Link>
+                                        <Link to={"/user-page/" + data.id}>Открыть</Link>
                                     </td>
                                 </tr>
                             )

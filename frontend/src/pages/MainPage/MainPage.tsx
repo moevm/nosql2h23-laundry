@@ -5,6 +5,7 @@ import {Navigate, useNavigate} from "react-router-dom";
 import {useAppDispatch, useAppSelector} from "../../hooks";
 import {useCookies} from "react-cookie";
 import {setUser} from "../../features/auth/authSlice";
+import axios from "axios";
 
 export function MainPage() {
 
@@ -75,10 +76,19 @@ export function MainPage() {
                         <Card.Body>
                             <Card.Title>Ваш филиал</Card.Title>
                             <Card.Text>Страница филиала, закрпленного за вами.</Card.Text>
-                            <Button variant="primary" className="text-center" onClick={() => {
-                                // TODO - получить id филиала
-                                let id: number = 23;
-                                navigate("/branch/" + id)
+                            <Button variant="primary" className="text-center" onClick={async () => {
+
+                                await axios.get("/api/branch/get_by_admin_id", {
+                                    baseURL: "http://localhost:8080",
+                                    params: {
+                                        admin_id: auth.id
+                                    }
+                                }).then(async (response) => {
+                                    navigate("/branch-page/" + response.data.id)
+                                }).catch((error) => {
+                                    console.log(error)
+                                })
+
                             }}>Открыть</Button>
                         </Card.Body>
                     </Card>
@@ -87,10 +97,19 @@ export function MainPage() {
                         <Card.Body>
                             <Card.Title>Все заказы</Card.Title>
                             <Card.Text>Список всех заказов филиалом, закрепленного за вами.</Card.Text>
-                            <Button variant="primary" onClick={() => {
-                                // TODO - получить название филиала
-                                let name: string = "Москва, улица Рождественка, 20/8с16";
-                                navigate("/orders-list/?branch=" + encodeURIComponent(name))
+                            <Button variant="primary" onClick={async () => {
+
+                                await axios.get("/api/branch/get_by_admin_id", {
+                                    baseURL: "http://localhost:8080",
+                                    params: {
+                                        admin_id: auth.id
+                                    }
+                                }).then(async (response) => {
+                                    navigate("/orders-list/?branch=" + encodeURIComponent(response.data.address))
+                                }).catch((error) => {
+                                    console.log(error)
+                                })
+
                             }}>Открыть</Button>
                         </Card.Body>
                     </Card>
@@ -106,10 +125,17 @@ export function MainPage() {
                         <Card.Body>
                             <Card.Title>Ваш филиал</Card.Title>
                             <Card.Text>Страница филиала, закрпленного за вами.</Card.Text>
-                            <Button variant="primary" className="text-center" onClick={() => {
-                                // TODO - получить id филиала
-                                let id: number = 23;
-                                navigate("/branch/" + id)
+                            <Button variant="primary" className="text-center" onClick={async () => {
+                                await axios.get("/api/branch/get_by_director_id", {
+                                    baseURL: "http://localhost:8080",
+                                    params: {
+                                        director_id: auth.id
+                                    }
+                                }).then(async (response) => {
+                                    navigate("/branch-page/" + response.data.id)
+                                }).catch((error) => {
+                                    console.log(error)
+                                })
                             }}>Открыть</Button>
                         </Card.Body>
                     </Card>
@@ -118,10 +144,19 @@ export function MainPage() {
                         <Card.Body>
                             <Card.Title>Ваш склад</Card.Title>
                             <Card.Text>Страница склада, закрпленного за вами.</Card.Text>
-                            <Button variant="primary" onClick={() => {
-                                // TODO - получить id склада
-                                let id: number = 23;
-                                navigate("/warehouse/" + id)
+                            <Button variant="primary" onClick={async () => {
+
+                                await axios.get("/api/warehouse/get_by_director_id", {
+                                    baseURL: "http://localhost:8080",
+                                    params: {
+                                        director_id: auth.id
+                                    }
+                                }).then(async (response) => {
+                                    navigate("/warehouse-page/" + response.data.id)
+                                }).catch((error) => {
+                                    console.log(error)
+                                })
+
                             }}>Открыть</Button>
                         </Card.Body>
                     </Card>
@@ -135,7 +170,8 @@ export function MainPage() {
                     <Card className="mb-3">
                         <Row className="g-0">
                             <Col className="col-md-4">
-                                <Card.Img style={{width: "100%", height: "100%"}} className="img-fluid rounded-start" variant="left" src="/ClientBackgroundSmall.png"/>
+                                <Card.Img style={{width: "100%", height: "100%"}} className="img-fluid rounded-start"
+                                          variant="left" src="/ClientBackgroundSmall.png"/>
                             </Col>
                             <Col className="">
                                 <Card.Body>
@@ -151,7 +187,8 @@ export function MainPage() {
                     <Card className="mb-3">
                         <Row className="g-0">
                             <Col className="col-md-4">
-                                <Card.Img style={{width: "100%", height: "100%"}} className="img-fluid rounded-start" variant="left" src="/OrderBackgroundSmall.png"/>
+                                <Card.Img style={{width: "100%", height: "100%"}} className="img-fluid rounded-start"
+                                          variant="left" src="/OrderBackgroundSmall.png"/>
                             </Col>
                             <Col className="">
                                 <Card.Body>
@@ -169,7 +206,8 @@ export function MainPage() {
                     <Card className="mb-3">
                         <Row className="g-0">
                             <Col className="col-md-4">
-                                <Card.Img style={{width: "100%", height: "100%"}} className="img-fluid rounded-start" variant="left" src="/EmployeeBackgroundSmall.png"/>
+                                <Card.Img style={{width: "100%", height: "100%"}} className="img-fluid rounded-start"
+                                          variant="left" src="/EmployeeBackgroundSmall.png"/>
                             </Col>
                             <Col className="">
                                 <Card.Body>
@@ -185,7 +223,8 @@ export function MainPage() {
                     <Card className="mb-3">
                         <Row className="g-0">
                             <Col className="col-md-4">
-                                <Card.Img style={{width: "100%", height: "100%"}} className="img-fluid rounded-start" variant="left" src="/BranchBackgroundSmall2.png"/>
+                                <Card.Img style={{width: "100%", height: "100%"}} className="img-fluid rounded-start"
+                                          variant="left" src="/BranchBackgroundSmall2.png"/>
                             </Col>
                             <Col className="">
                                 <Card.Body>
@@ -201,7 +240,8 @@ export function MainPage() {
                     <Card className="mb-3">
                         <Row className="g-0">
                             <Col className="col-md-4">
-                                <Card.Img style={{width: "100%", height: "100%"}} className="img-fluid rounded-start" variant="left" src="/WarehouseBackgroundSmall2.png"/>
+                                <Card.Img style={{width: "100%", height: "100%"}} className="img-fluid rounded-start"
+                                          variant="left" src="/WarehouseBackgroundSmall2.png"/>
                             </Col>
                             <Col className="">
                                 <Card.Body>
@@ -221,7 +261,7 @@ export function MainPage() {
                         <Card.Body>
                             <Card.Title>Экспорт/Импорт данных</Card.Title>
                             <Card.Text>Страница экспортирования/испортирования данных</Card.Text>
-                            <Button variant="primary">Открыть</Button>
+                            <Button variant="primary" onClick={() => navigate("/import-export")}>Открыть</Button>
                         </Card.Body>
                     </Card>
                 </div>

@@ -1,6 +1,6 @@
 import "./NewEmployee.scss";
 import Header from "../../components/Header/Header";
-import {Alert, Button, Col, Form, Row} from "react-bootstrap";
+import {Alert, Button, Col, Form} from "react-bootstrap";
 import {useAppDispatch, useAppSelector} from "../../hooks";
 import {useCookies} from "react-cookie";
 import {setUser} from "../../features/auth/authSlice";
@@ -220,7 +220,7 @@ export function NewEmployee() {
                                             </div>
                                         </Form.Label>
                                         <Col>
-                                            <Form.Control placeholder="Введите пароль"
+                                            <Form.Control type="password" placeholder="Введите пароль"
                                                           ref={passwordRef}
                                             />
                                         </Col>
@@ -235,7 +235,7 @@ export function NewEmployee() {
                                             </div>
                                         </Form.Label>
                                         <Col>
-                                            <Form.Control placeholder="Повторите пароль"
+                                            <Form.Control type="password" placeholder="Повторите пароль"
                                                           ref={repeatPasswordRef}
                                             />
                                         </Col>

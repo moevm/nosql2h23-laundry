@@ -8,7 +8,7 @@ import {useCookies} from "react-cookie";
 import axios, {HttpStatusCode} from "axios";
 import {ExclamationTriangle} from "react-bootstrap-icons";
 
-export function SignUp () {
+export function SignUp() {
 
     // TODO: Add redux data about user role and token
     // TODO: Alert on validation error
@@ -32,7 +32,9 @@ export function SignUp () {
 
     function createAlert(showAlert: (value: (((prevState: boolean) => boolean) | boolean)) => void) {
         showAlert(true);
-        setTimeout(() => {showAlert(false);}, 3000);
+        setTimeout(() => {
+            showAlert(false);
+        }, 3000);
     }
 
     async function submit() {
@@ -57,7 +59,7 @@ export function SignUp () {
             password: passwordRef.current.value,
             fullName: fullNameRef.current.value,
             email: emailRef.current.value
-        },{
+        }, {
             baseURL: "http://localhost:8080"
         }).then((response) => {
 
@@ -150,7 +152,9 @@ export function SignUp () {
                             <Button variant="primary" onClick={() => submit()}>
                                 Создать Аккант
                             </Button>
-                            <Button variant="primary" onClick={() => {navigate("/sign_in")}}>
+                            <Button variant="primary" onClick={() => {
+                                navigate("/sign_in")
+                            }}>
                                 Отмена
                             </Button>
                         </div>

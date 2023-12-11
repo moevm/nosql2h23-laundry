@@ -1,6 +1,6 @@
 import "./SelectFilter.scss"
-import React, {RefObject, useEffect, useRef, useState} from "react";
-import {FunnelFill, Search} from "react-bootstrap-icons";
+import React, {useEffect, useRef, useState} from "react";
+import {FunnelFill} from "react-bootstrap-icons";
 import {Button, Form} from "react-bootstrap";
 
 type selectFilterProps = {
@@ -60,7 +60,7 @@ export function SelectFilter(props: selectFilterProps) {
 
 
     let valuesArray: string[] = [];
-    let refInputs = useRef<{[key: string]: HTMLInputElement}>({});
+    let refInputs = useRef<{ [key: string]: HTMLInputElement }>({});
     let isEmpty: boolean = true;
 
     for (const key in props.filterData) {
