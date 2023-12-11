@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderService {
 
+    private final static DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+
     private final OrderRepository orderRepository;
     private final ServiceRepository serviceRepository;
 
@@ -112,8 +114,8 @@ public class OrderService {
                         .type(contains.getService().getType().toString())
                         .build()
                 ).toList())
-                .creationDate(order.getCreationDate().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                .editDate(order.getEditDate().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+                .creationDate(order.getCreationDate().format(formatter1))
+                .editDate(order.getEditDate().format(formatter1))
                 .build();
 
     }
@@ -158,22 +160,30 @@ public class OrderService {
 
     @Transactional
     public void approveOrders(ApproveOrderRequest request) {
-        orderRepository.setNewStateForOrders(request.getOrderIds().stream().map(UUID::fromString).toList(), OrderState.NEW, OrderState.ACTIVE);
+        ZonedDateTime editDateTime = ZonedDateTime.now();
+
+        orderRepository.setNewStateForOrders(request.getOrderIds().stream().map(UUID::fromString).toList(), OrderState.NEW, OrderState.ACTIVE, editDateTime);
     }
 
     @Transactional
     public void prepareOrders(GetReadyOrderRequest request) {
-        orderRepository.setNewStateForOrders(request.getOrderIds().stream().map(UUID::fromString).toList(), OrderState.ACTIVE, OrderState.READY);
+        ZonedDateTime editDateTime = ZonedDateTime.now();
+
+        orderRepository.setNewStateForOrders(request.getOrderIds().stream().map(UUID::fromString).toList(), OrderState.ACTIVE, OrderState.READY, editDateTime);
     }
 
     @Transactional
     public void completeOrders(CompleteOrderRequest request) {
-        orderRepository.setNewStateForOrders(request.getOrderIds().stream().map(UUID::fromString).toList(), OrderState.READY, OrderState.COMPLETED);
+        ZonedDateTime editDateTime = ZonedDateTime.now();
+
+        orderRepository.setNewStateForOrders(request.getOrderIds().stream().map(UUID::fromString).toList(), OrderState.READY, OrderState.COMPLETED, editDateTime);
     }
 
     @Transactional
     public void cancelOrders(CancelOrderRequest request) {
-        orderRepository.cancelOrders(request.getOrderIds().stream().map(UUID::fromString).toList());
+        ZonedDateTime editDateTime = ZonedDateTime.now();
+
+        orderRepository.cancelOrders(request.getOrderIds().stream().map(UUID::fromString).toList(), editDateTime);
     }
 }
 

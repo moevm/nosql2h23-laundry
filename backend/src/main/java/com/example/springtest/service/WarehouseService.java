@@ -1,10 +1,14 @@
 package com.example.springtest.service;
 
+import com.example.springtest.dto.branch.GetByAdminIdResonse;
+import com.example.springtest.dto.warehouse.AddProductsRequest;
 import com.example.springtest.dto.warehouse.CreateWarehouseRequest;
 import com.example.springtest.dto.warehouse.GetAllRequest;
 import com.example.springtest.dto.warehouse.GetTotalWarehousesCountRequest;
+import com.example.springtest.exceptions.controller.NoSuchBranchException;
 import com.example.springtest.exceptions.controller.NoSuchWarehouseException;
 import com.example.springtest.exceptions.controller.WarehouseAlreadyExistsException;
+import com.example.springtest.model.Branch;
 import com.example.springtest.model.Warehouse;
 import com.example.springtest.repository.WarehouseRepository;
 import lombok.RequiredArgsConstructor;
@@ -61,4 +65,15 @@ public class WarehouseService {
 
         repository.createWarehouse(UUID.randomUUID(), request.getAddress(), request.getBranchAddress(), request.getSchedule(), creationDateTime, creationDateTime);
     }
+
+    @Transactional
+    public GetByAdminIdResonse findWarehouseByDirectorId(String directorId) {
+        Warehouse warehouse = repository.findWarehouseByDirectorId(UUID.fromString(directorId)).orElseThrow(NoSuchWarehouseException::new);
+
+        return GetByAdminIdResonse.builder()
+                .id(warehouse.getId().toString())
+                .address(warehouse.getAddress())
+                .build();
+    }
+
 }

@@ -16,23 +16,28 @@ public interface ProductRepository extends Neo4jRepository<Product, UUID> {
 
     @Query("MATCH (w:Warehouse {id: $warehouseId}) " +
             "MATCH (p:Product {type: $productType}) " +
-            "CREATE (w)-[:STORE {count: $count}]->(p)")
-    void addNewProduct(UUID warehouseId, String productType, int count);
+            "CREATE (w)-[:STORE {count: $count}]->(p) " +
+            "SET w.editDate = $editDateTime")
+    void addNewProduct(UUID warehouseId, String productType, int count, ZonedDateTime editDateTime);
 
     @Query("MATCH (w:Warehouse {id: $warehouseId})-[store:STORE]->(p:Product {type: $productType}) " +
-            "SET store.count += $count")
-    void addProduct(UUID warehouseId, String productType, int count);
+            "SET store.count = store.count + $count " +
+            "SET w.editDate = $editDateTime")
+    void addProduct(UUID warehouseId, String productType, int count, ZonedDateTime editDateTime);
 
     @Query("MATCH (w:Warehouse {id: $warehouseId})-[store:STORE]->(p:Product {type: $productType}) " +
-            "DELETE store")
-    void removeWholeProduct(UUID warehouseId, String productType);
+            "DELETE store " +
+            "SET w.editDate = $editDateTime")
+    void removeWholeProduct(UUID warehouseId, String productType, ZonedDateTime editDateTime);
 
     @Query("MATCH (w:Warehouse {id: $warehouseId})-[store:STORE]->(p:Product {type: $productType}) " +
-            "SET store.count -= $count")
-    void removePartProduct(UUID warehouseId, String productType, int count);
+            "SET store.count = store.count - $count " +
+            "SET w.editDate = $editDateTime")
+    void removePartProduct(UUID warehouseId, String productType, int count, ZonedDateTime editDateTime);
 
     @Query("MATCH (w:Warehouse {id: $warehouseId}) " +
             "MATCH (p:Product {type: $productType}) " +
-            "CREATE (w)-[:REMOVED {amount: $count, creationDate: $creationDate}]->(p)")
-    void saveRemovedHistory(UUID warehouseId, String productType, int count, ZonedDateTime creationDate);
+            "CREATE (w)-[:REMOVED {amount: $count, creationDate: $creationDate}]->(p) " +
+            "SET w.editDate = $editDateTime")
+    void saveRemovedHistory(UUID warehouseId, String productType, int count, ZonedDateTime creationDate, ZonedDateTime editDateTime);
 }

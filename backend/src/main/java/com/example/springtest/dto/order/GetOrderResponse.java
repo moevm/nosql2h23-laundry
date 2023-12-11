@@ -33,7 +33,7 @@ public class GetOrderResponse {
     private String branchId;
     private String branchAddress;
 
-    private float price;
+    private double price;
 
     private List<Service> services;
 

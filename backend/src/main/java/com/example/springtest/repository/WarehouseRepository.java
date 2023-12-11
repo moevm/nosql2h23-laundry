@@ -1,6 +1,7 @@
 package com.example.springtest.repository;
 
 import com.example.springtest.model.Warehouse;
+import com.example.springtest.model.relationships.Removed;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.stereotype.Repository;
@@ -57,4 +58,13 @@ public interface WarehouseRepository extends Neo4jRepository<Warehouse, UUID> {
     @Query("MATCH (branch:Branch {address: $branch})<-[:MANAGE]-(director:Employee) " +
             "CREATE (director)-[:MANAGE]->(warehouse:Warehouse {id: $id, address: $address, schedule: $schedule, creationDate: $creationDate, editDate: $editDate})<-[:SUPPLIED_BY]-(branch)")
     void createWarehouse(UUID id, String address, String branch, List<String> schedule, ZonedDateTime creationDate, ZonedDateTime editDate);
+
+    @Query("MATCH (w:Warehouse)<-[:ADMINISTERS]-(:Employee {id: $directorId}) " +
+            "RETURN w")
+    Optional<Warehouse> findWarehouseByDirectorId(UUID directorId);
+
+
+    @Query("MATCH (w:Warehouse {id: $warehouseId})-[r:REMOVED]->(p:Product) " +
+            "RETURN w, collect(r), collect(p)")
+    Optional<Warehouse> findRemovedProductsByWarehouseId(UUID warehouseId);
 }

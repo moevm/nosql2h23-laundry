@@ -1,5 +1,6 @@
 package com.example.springtest.repository;
 
+import com.example.springtest.dto.employee.GetDirectorsWithoutBranchResponse;
 import com.example.springtest.model.Branch;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
@@ -26,7 +27,7 @@ public interface BranchRepository extends Neo4jRepository<Branch, UUID> {
     @Query("MATCH (b:Branch) " +
             "OPTIONAL MATCH (b)<-[eb:EXECUTED_BY]-(o:Order) " +
             "OPTIONAL MATCH (b)-[sb:SUPPLIED_BY]->(w:Warehouse) " +
-            "RETURN b, collect(eb), collect(o), sb, w" +
+            "RETURN b, collect(eb), collect(o), sb, w " +
             "SKIP $skip " +
             "LIMIT $elementsOnPage")
     List<Branch> getAllBranches(int elementsOnPage, int skip);
@@ -77,4 +78,15 @@ public interface BranchRepository extends Neo4jRepository<Branch, UUID> {
             "RETURN b")
     List<Branch> findBranchesWithoutWarehouse();
 
+    @Query("MATCH (b:Branch)<-[:ADMINISTERS]-(:Employee {id: $id}) " +
+            "RETURN b")
+    Optional<Branch> findBranchByAdminId(UUID id);
+
+    @Query("MATCH (b:Branch)<-[:MANAGE]-(:Employee {id: $id}) " +
+            "RETURN b")
+    Optional<Branch> findBranchByDirectorId(UUID id);
+
+    @Query("MATCH (b:Branch {id: $id})<-[c:EXECUTED_BY]-(o:Order) " +
+            "RETURN b, collect(c), collect(o)")
+    Optional<Branch> getBranchWithOrders(UUID id);
 }

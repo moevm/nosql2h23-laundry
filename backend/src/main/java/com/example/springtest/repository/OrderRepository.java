@@ -29,8 +29,7 @@ public interface OrderRepository extends Neo4jRepository<Order, UUID> {
     @Query("MATCH (o:Order {id: $id})-[ob:ORDERED_BY]->(c:Client) " +
             "MATCH (o)-[eb:EXECUTED_BY]->(b:Branch) " +
             "MATCH (o)-[co:CONTAINS]->(service:Service) " +
-            "WHERE o.creationDate >= $start AND o.creationDate <= $end AND o.state IN $possibleStates AND b.address CONTAINS $branch " +
-            "RETURN o, ob, c, eb, b, collect(co), collect(service)")
+            "RETURN o, ob, c, collect(co), collect(service), eb, b")
     Optional<Order> findOrderById(UUID id);
 
     @Query("MATCH (o:Order)-[ob:ORDERED_BY]->(c:Client) " +
@@ -65,11 +64,13 @@ public interface OrderRepository extends Neo4jRepository<Order, UUID> {
 
     @Query("MATCH (o:Order {state: $oldState}) " +
             "WHERE o.id IN $idList " +
-            "SET o.state = $newState")
-    void setNewStateForOrders(List<UUID> idList, OrderState oldState, OrderState newState);
+            "SET o.state = $newState " +
+            "SET o.editDate = $editDateTime")
+    void setNewStateForOrders(List<UUID> idList, OrderState oldState, OrderState newState, ZonedDateTime editDateTime);
 
     @Query("MATCH (o:Order) " +
             "WHERE o.id IN $idList " +
-            "SET o.state = 'CANCELED'")
-    void cancelOrders(List<UUID> list);
+            "SET o.state = 'CANCELED' " +
+            "SET o.editDate = $editDateTime")
+    void cancelOrders(List<UUID> idList, ZonedDateTime editDateTime);
 }

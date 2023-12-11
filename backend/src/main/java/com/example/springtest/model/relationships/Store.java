@@ -22,7 +22,7 @@ public class Store {
     @TargetNode
     private Product product;
 
-    private int amount;
+    private int count;
 
 
 }

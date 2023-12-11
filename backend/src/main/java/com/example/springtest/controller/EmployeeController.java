@@ -2,6 +2,7 @@ package com.example.springtest.controller;
 
 
 import com.example.springtest.dto.employee.*;
+import com.example.springtest.dto.user.GetUserResponse;
 import com.example.springtest.model.Branch;
 import com.example.springtest.model.Employee;
 import com.example.springtest.model.User;
@@ -20,33 +21,6 @@ import java.util.UUID;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
-
-    @GetMapping("/api/employee/get")
-    public GetEmployeeResponse getEmployee(@RequestParam("id") String id) {
-        Employee employee = employeeService.findEmployeeById(UUID.fromString(id));
-
-        Branch branch = null;
-
-        if (employee.getRole() == UserRole.ADMIN) {
-            branch = employee.getBranchAdmin();
-        } else if (employee.getRole() == UserRole.DIRECTOR) {
-            branch = employee.getBranchDirector();
-        }
-
-        return GetEmployeeResponse.builder()
-                .name(employee.getFullName())
-                .email(employee.getEmail())
-                .phone(employee.getPhone())
-                .branchId((branch == null) ? "" : branch.getId().toString())
-                .branchAddress((branch == null) ? "" : branch.getAddress())
-                .warehouseId((employee.getWarehouse() == null) ? "" : employee.getWarehouse().getId().toString())
-                .warehouseAddress((employee.getWarehouse() == null) ? "" : employee.getWarehouse().getAddress())
-                .role(employee.getRole().toString())
-                .schedule(employee.getSchedule())
-                .creationDate(employee.getCreationDate().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                .editDate(employee.getEditDate().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                .build();
-    }
 
     @PostMapping("/api/employee/create")
     public void createEmployee(@RequestBody CreateEmployeeRequest request) {

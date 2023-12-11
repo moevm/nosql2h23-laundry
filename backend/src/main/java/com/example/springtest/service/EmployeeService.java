@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -73,6 +74,34 @@ public class EmployeeService {
     }
 
     @Transactional
+    public void createEmployee(CreateEmployeeCustomRequest request) {
+        Optional<User> userOptional = userRepository.findByLogin(request.getLogin());
+        if (userOptional.isPresent()) {
+            throw new UserAlreadyExistsException();
+        }
+
+        String roleString = request.getRole();
+
+        // TODO: Catch IllegalArgumentException?
+        UserRole role = UserRole.valueOf(roleString);
+
+        ZonedDateTime creationDateTime = ZonedDateTime.now();
+
+        employeeRepository.createEmployee(
+                request.getId(),
+                role,
+                request.getLogin(),
+                request.getPassword(),
+                request.getName(),
+                request.getEmail(),
+                request.getPhone(),
+                request.getSchedule(),
+                creationDateTime,
+                creationDateTime
+        );
+    }
+
+    @Transactional
     public List<Employee> getAllEmployees(GetAllRequest request) {
 
         List<UserRole> possibleRoles = request.getRoles().stream().map(UserRole::valueOf).toList();
@@ -110,9 +139,13 @@ public class EmployeeService {
         salaryToRole.put(UserRole.DIRECTOR, 68f);
         salaryToRole.put(UserRole.SUPERUSER, 500f);
 
-        LocalDate startDate = LocalDate.parse(request.getStartDate());
-        LocalDate endDate = LocalDate.parse(request.getEndDate());
+        LocalDate startDate = LocalDate.parse(request.getStartDate(), DateTimeFormatter.RFC_1123_DATE_TIME);
+        LocalDate endDate = LocalDate.parse(request.getEndDate(), DateTimeFormatter.RFC_1123_DATE_TIME);
 
+        Set<DayOfWeek> weekend = EnumSet.of(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
+        long workDaysBetween = startDate.datesUntil(endDate)
+                .filter(d -> !weekend.contains(d.getDayOfWeek()))
+                .count();
 
         List<Employee> employeeList = employeeRepository.findAllEmployees(request.getElementsOnPage(), request.getElementsOnPage() * (request.getPage() - 1));
 
@@ -124,23 +157,17 @@ public class EmployeeService {
                     .name(employee.getFullName())
                     .role(employee.getRole().toString())
                     .maxSalary(salaryToRole.get(employee.getRole()))
-                    .amountOfDaysAtWork(employee.getShifts().stream()
+                    .daysAtWork(employee.getShifts().stream()
                             .filter((shift -> (shift.getDate().isAfter(startDate) || shift.getDate().isEqual(startDate)) && (shift.getDate().isBefore(endDate) || shift.getDate().isEqual(endDate))))
                             .toList().size()
                     )
                     .build();
 
-            Set<DayOfWeek> weekend = EnumSet.of(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
-
-            long workDaysBetween = startDate.datesUntil(endDate)
-                    .filter(d -> !weekend.contains(d.getDayOfWeek()))
-                    .count();
-
-            data.setResultSalary(data.getMaxSalary() / workDaysBetween * data.getAmountOfDaysAtWork());
+            data.setResultSalary(data.getMaxSalary() / workDaysBetween * data.getDaysAtWork());
 
             dataList.add(data);
         }
 
-        return new CalculateSalariesResponse(dataList);
+        return new CalculateSalariesResponse(dataList, workDaysBetween);
     }
 }

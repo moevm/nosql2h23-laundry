@@ -32,7 +32,9 @@ public class ProductService {
 
     @Transactional
     public void addProducts(AddProductsRequest request) {
-        Warehouse warehouse = warehouseRepository.findByAddress(request.getWarehouse()).orElseThrow(NoSuchWarehouseException::new);
+        ZonedDateTime editDateTime = ZonedDateTime.now();
+
+        Warehouse warehouse = warehouseRepository.findWarehouseById(UUID.fromString(request.getWarehouse())).orElseThrow(NoSuchWarehouseException::new);
 
         for (AddProductsRequest.Data product : request.getProducts()) {
             if (warehouse.getProducts().stream()
@@ -40,9 +42,9 @@ public class ProductService {
                     .map(Product::getType)
                     .toList()
                     .contains(ProductType.valueOf(product.getName()))) {
-                productRepository.addProduct(warehouse.getId(), product.getName(), product.getCount());
+                productRepository.addProduct(warehouse.getId(), product.getName(), product.getCount(), editDateTime);
             } else {
-                productRepository.addNewProduct(warehouse.getId(), product.getName(), product.getCount());
+                productRepository.addNewProduct(warehouse.getId(), product.getName(), product.getCount(), editDateTime);
             }
         }
 
@@ -50,21 +52,23 @@ public class ProductService {
 
     @Transactional
     public void removeProducts(RemoveProductsRequest request) {
-        Warehouse warehouse = warehouseRepository.findByAddress(request.getWarehouse()).orElseThrow(NoSuchWarehouseException::new);
+        ZonedDateTime editDateTime = ZonedDateTime.now();
+
+        Warehouse warehouse = warehouseRepository.findWarehouseById(UUID.fromString(request.getWarehouse())).orElseThrow(NoSuchWarehouseException::new);
 
         Map<ProductType, Integer> productList = warehouse.getProducts().stream()
-                .collect(Collectors.toMap((store -> store.getProduct().getType()), Store::getAmount));
+                .collect(Collectors.toMap((store -> store.getProduct().getType()), Store::getCount));
 
         ZonedDateTime creationDate = ZonedDateTime.now();
 
         for (RemoveProductsRequest.Data product : request.getProducts()) {
             if (productList.get(ProductType.valueOf(product.getName())) == product.getCount()) {
-                productRepository.removeWholeProduct(warehouse.getId(), product.getName());
+                productRepository.removeWholeProduct(warehouse.getId(), product.getName(), editDateTime);
             } else {
-                productRepository.removePartProduct(warehouse.getId(), product.getName(), product.getCount());
+                productRepository.removePartProduct(warehouse.getId(), product.getName(), product.getCount(), editDateTime);
             }
 
-            productRepository.saveRemovedHistory(warehouse.getId(), product.getName(), product.getCount(), creationDate);
+            productRepository.saveRemovedHistory(warehouse.getId(), product.getName(), product.getCount(), creationDate, editDateTime);
         }
     }
 }

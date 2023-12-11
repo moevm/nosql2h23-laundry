@@ -7,6 +7,7 @@ import com.example.springtest.service.BranchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +17,20 @@ import java.util.UUID;
 public class BranchController {
 
     private final BranchService branchService;
+
+    @GetMapping("/api/branch/get_by_admin_id")
+    public GetByAdminIdResonse getByAdminId(@RequestParam("admin_id") String adminId) {
+
+        return branchService.findBranchByAdminId(adminId);
+
+    }
+
+    @GetMapping("/api/branch/get_by_director_id")
+    public GetByAdminIdResonse getByDirectorId(@RequestParam("director_id") String directorId) {
+
+        return branchService.findBranchByDirectorId(directorId);
+
+    }
 
     @GetMapping("/api/branch/get_branches_without_warehouse")
     public GetDirectorsWithoutBranchResponse getWarehousesWithoutBranch() {

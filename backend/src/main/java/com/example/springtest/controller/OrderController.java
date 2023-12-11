@@ -15,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
 
+
     private final OrderService orderService;
 
     @GetMapping("/api/order/get")
@@ -26,6 +27,27 @@ public class OrderController {
     public void createOrder(@RequestBody CreateOrderRequest request) {
         orderService.createOrder(request);
     }
+
+    @PostMapping("/api/order/cancel")
+    public void cancelOrder(@RequestBody CancelOrderRequest request) {
+        orderService.cancelOrders(request);
+    }
+
+    @PostMapping("/api/order/approve")
+    public void approveOrder(@RequestBody ApproveOrderRequest request) {
+        orderService.approveOrders(request);
+    }
+
+    @PostMapping("/api/order/ready")
+    public void readyOrder(@RequestBody GetReadyOrderRequest request) {
+        orderService.prepareOrders(request);
+    }
+
+    @PostMapping("/api/order/complete")
+    public void completeOrder(@RequestBody CompleteOrderRequest request) {
+        orderService.completeOrders(request);
+    }
+
 
     @PostMapping("/api/order/all")
     public GetAllResponse getAllOrders(@RequestBody GetAllRequest request) {

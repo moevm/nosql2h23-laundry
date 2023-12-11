@@ -14,7 +14,6 @@ import java.util.UUID;
 @Repository
 public interface EmployeeRepository extends Neo4jRepository<Employee, UUID> {
 
-    // TODO: Has double tag been written correctly?
     @Query("CREATE (e:Employee:User {id: $id, role: $role, login: $login, password: $password, fullName: $fullName, email: $email, phone: $phone, schedule: $schedule, creationDate: $creationDate, editDate: $editDate}) RETURN e")
     Employee createEmployee(UUID id, UserRole role, String login, String password, String fullName, String email, String phone, List<String> schedule, ZonedDateTime creationDate, ZonedDateTime editDate);
 

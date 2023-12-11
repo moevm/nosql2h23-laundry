@@ -23,11 +23,12 @@ public class CalculateSalariesResponse {
 
         private float maxSalary;
 
-        private int amountOfDaysAtWork;
+        private int daysAtWork;
 
         private float resultSalary;
     }
 
     private List<Data> employees;
+    private long workingDays;
 
 }

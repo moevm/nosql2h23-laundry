@@ -1,13 +1,18 @@
 package com.example.springtest.service;
 
 import com.example.springtest.dto.branch.*;
+import com.example.springtest.dto.employee.GetDirectorsWithoutBranchResponse;
 import com.example.springtest.exceptions.controller.BranchAlreadyExistsException;
+import com.example.springtest.exceptions.controller.NoSuchBranchException;
 import com.example.springtest.model.Branch;
 import com.example.springtest.model.Order;
 import com.example.springtest.model.Warehouse;
+import com.example.springtest.model.relationships.Contains;
+import com.example.springtest.model.relationships.Removed;
 import com.example.springtest.model.types.OrderState;
 import com.example.springtest.repository.BranchRepository;
 import com.example.springtest.repository.EmployeeRepository;
+import com.example.springtest.repository.OrderRepository;
 import com.example.springtest.repository.WarehouseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +31,7 @@ public class BranchService {
 
     private final BranchRepository branchRepository;
     private final WarehouseRepository warehouseRepository;
-    private final EmployeeRepository employeeRepository;
+    private final OrderRepository orderRepository;
 
     final static DateTimeFormatter formatter = DateTimeFormatter.RFC_1123_DATE_TIME;
 
@@ -132,13 +137,19 @@ public class BranchService {
                             (order.getCreationDate().equals(end) || order.getCreationDate().isBefore(end))
             )).mapToDouble(Order::getPrice).sum();
 
-            float spending = (float) warehouseRepository.findById(branch.getWarehouse().getId()).get().getRemovedProducts().stream()
-                    .filter(removed ->
-                            (removed.getCreationDate().equals(start) || removed.getCreationDate().isAfter(start)) &&
-                                    (removed.getCreationDate().equals(end) || removed.getCreationDate().isBefore(end))
-                    )
-                    .mapToDouble(removed -> removed.getAmount() * removed.getProduct().getPrice())
-                    .sum();
+            Optional<Warehouse> warehouse = warehouseRepository.findRemovedProductsByWarehouseId(branch.getWarehouse().getId());
+
+            float spending = 0;
+
+            if (warehouse.isPresent()) {
+                spending = (float) warehouse.get().getRemovedProducts().stream()
+                        .filter(removed ->
+                                (removed.getCreationDate().equals(start) || removed.getCreationDate().isAfter(start)) &&
+                                        (removed.getCreationDate().equals(end) || removed.getCreationDate().isBefore(end))
+                        )
+                        .mapToDouble(removed -> removed.getAmount() * removed.getProduct().getPrice())
+                        .sum();
+            }
 
             dataList.add(CalculateBranchesProfitResponse.Data.builder()
                     .branchId(branch.getId().toString())
@@ -163,21 +174,33 @@ public class BranchService {
         List<Branch> branchList = branchRepository.getAllBranches(request.getElementsOnPage(), request.getElementsOnPage() * (request.getPage() - 1));
 
         for (Branch branch : branchList) {
-            int servicesCompleted = branch.getOrders().stream()
+            int servicesCompleted = 0;
+
+            for (Order order : branch.getOrders().stream()
                     .filter((order ->
                             (order.getCreationDate().equals(start) || order.getCreationDate().isAfter(start)) &&
                                     (order.getCreationDate().equals(end) || order.getCreationDate().isBefore(end))
                     ))
-                    .filter(order -> order.getState().equals(OrderState.COMPLETED))
-                    .mapToInt(order -> order.getServices().size()).sum();
+                    .filter(order -> order.getState().equals(OrderState.COMPLETED)).toList()) {
+                Optional<Order> optionalOrder = orderRepository.findOrderById(order.getId());
 
-            float spentProductsCoefficient = (float) warehouseRepository.findById(branch.getWarehouse().getId()).get().getRemovedProducts().stream()
-                    .filter(removed ->
-                            (removed.getCreationDate().equals(start) || removed.getCreationDate().isAfter(start)) &&
-                                    (removed.getCreationDate().equals(end) || removed.getCreationDate().isBefore(end))
-                    )
-                    .mapToDouble(removed -> removed.getAmount() * removed.getProduct().getPrice() / 100)
-                    .sum();
+                if (optionalOrder.isPresent()) {
+                    servicesCompleted += optionalOrder.get().getServices().stream().mapToInt(Contains::getAmount).sum();
+                }
+            }
+
+            Optional<Warehouse> warehouse = warehouseRepository.findRemovedProductsByWarehouseId(branch.getWarehouse().getId());
+            float spentProductsCoefficient = 0;
+
+            if (warehouse.isPresent()) {
+                spentProductsCoefficient = (float) warehouse.get().getRemovedProducts().stream()
+                        .filter(removed ->
+                                (removed.getCreationDate().equals(start) || removed.getCreationDate().isAfter(start)) &&
+                                        (removed.getCreationDate().equals(end) || removed.getCreationDate().isBefore(end))
+                        )
+                        .mapToDouble(removed -> removed.getAmount() * removed.getProduct().getPrice() / 100)
+                        .sum();
+            }
 
             dataList.add(CalculateBranchesLoadResponse.Data.builder()
                     .branchId(branch.getId().toString())
@@ -188,5 +211,25 @@ public class BranchService {
         }
 
         return new CalculateBranchesLoadResponse(dataList);
+    }
+
+    @Transactional
+    public GetByAdminIdResonse findBranchByAdminId(String adminId) {
+        Branch branch = branchRepository.findBranchByAdminId(UUID.fromString(adminId)).orElseThrow(NoSuchBranchException::new);
+
+        return GetByAdminIdResonse.builder()
+                .id(branch.getId().toString())
+                .address(branch.getAddress())
+                .build();
+    }
+
+    @Transactional
+    public GetByAdminIdResonse findBranchByDirectorId(String adminId) {
+        Branch branch = branchRepository.findBranchByDirectorId(UUID.fromString(adminId)).orElseThrow(NoSuchBranchException::new);
+
+        return GetByAdminIdResonse.builder()
+                .id(branch.getId().toString())
+                .address(branch.getAddress())
+                .build();
     }
 }
