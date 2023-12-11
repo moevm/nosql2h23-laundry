@@ -7,6 +7,7 @@ import {useCookies} from "react-cookie";
 import {setUser} from "../../features/auth/authSlice";
 import {Link, Navigate, useNavigate} from "react-router-dom";
 import DatePicker from "react-date-picker";
+import axios from "axios";
 
 type TableData = {
     branchId: string,
@@ -181,12 +182,44 @@ export function IncomeCalc() {
             return;
         }
 
+        await axios.get("/api/branch/all_count", {
+            baseURL: "http://localhost:8080",
+            params: {
+                address: "",
+                warehouse: "",
+                director: "",
+                elementsOnPage: elementsOnPage
+            }
+        }).then(async (response) => {
+
+            setTotalPages(parseInt(response.data))
+
+            await axios.post("/api/branch/calculate_profit", {
+                startDate: startDate!.toUTCString(),
+                endDate: endDate!.toUTCString(),
+                page: currentPage,
+                elementsOnPage: elementsOnPage,
+            }, {
+                baseURL: "http://localhost:8080"
+            }).then((response) => {
+                setTableData(response.data.data);
+            }).catch((error) => {
+                console.log(error)
+            })
+
+        }).catch((error) => {
+            console.log(error)
+        })
+
     }
 
     useEffect(() => {
         if (startDate === null || endDate === null) {
-
+            setTableData([]);
+            setCurrentPage(1)
             return;
+        } else {
+            loadData();
         }
 
     }, [startDate, endDate]);

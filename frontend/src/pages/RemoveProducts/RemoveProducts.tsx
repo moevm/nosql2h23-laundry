@@ -171,10 +171,21 @@ export function RemoveProducts() {
 
                                 <ul>
                                     {
-                                        availableProducts.map((value, index) =>
-                                            <li key={value.type}>
-                                                {productNameTranslate.get(value.type) + ": " + value.amount + " шт."}
-                                            </li>
+                                        productsTypes.map((value, index) => {
+
+                                                let amount = 0;
+
+                                                for (const availableProduct of availableProducts) {
+                                                    if (availableProduct.type === value) {
+                                                        amount = availableProduct.amount;
+                                                        break;
+                                                    }
+                                                }
+
+                                                return <li key={value}>
+                                                    {productNameTranslate.get(value) + ": " + amount + " шт."}
+                                                </li>
+                                            }
                                         )
                                     }
                                 </ul>
@@ -226,7 +237,7 @@ export function RemoveProducts() {
                         </div>
 
                         <div className="buttons">
-                            <Button onClick={() => submitCreation()}>Добавить</Button>
+                            <Button onClick={() => submitCreation()}>Списать</Button>
                             <Button onClick={() => navigate(-1)}>Отмена</Button>
                         </div>
                     </Form>

@@ -8,6 +8,7 @@ import {useCookies} from "react-cookie";
 import {setUser} from "../../features/auth/authSlice";
 import {Navigate, useNavigate} from "react-router-dom";
 import DatePicker from "react-date-picker";
+import axios from "axios";
 
 type TableData = {
     name: string,
@@ -183,6 +184,35 @@ export function SalaryCalc() {
             return;
         }
 
+        await axios.post("/api/employee/all_count", {
+            name: "",
+            roles: [],
+            phone: "",
+            elementsOnPage: elementsOnPage
+        }, {
+            baseURL: "http://localhost:8080",
+        }).then(async (response) => {
+
+            setTotalPages(parseInt(response.data))
+
+            await axios.post("/api/employee/calculate_salaries", {
+                startDate: startDate!.toUTCString(),
+                endDate: endDate!.toUTCString(),
+                page: currentPage,
+                elementsOnPage: elementsOnPage,
+            }, {
+                baseURL: "http://localhost:8080"
+            }).then((response) => {
+                setTableData(response.data.employees);
+                setWorkingDays(response.data.workingDays)
+            }).catch((error) => {
+                console.log(error)
+            })
+
+        }).catch((error) => {
+            console.log(error)
+        })
+
     }
 
     useEffect(() => {
@@ -191,7 +221,8 @@ export function SalaryCalc() {
             return;
         }
 
-        setWorkingDays(5);
+        loadData();
+
     }, [startDate, endDate]);
 
     if (!auth.authorized) {

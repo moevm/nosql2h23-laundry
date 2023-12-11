@@ -5,61 +5,62 @@ import {setUser} from "../../features/auth/authSlice";
 import {Link, Navigate, useNavigate, useParams} from "react-router-dom";
 import {useAppDispatch, useAppSelector} from "../../hooks";
 import {useCookies} from "react-cookie";
+import axios from "axios";
 
 export function UserPage() {
 
     const navigate = useNavigate();
     let {userId} = useParams();
 
+    async function loadData(userId: string|undefined) {
+        await axios.get("/api/user/get", {
+            baseURL: "http://localhost:8080",
+            params: {
+                id: userId
+            }
+        }).then(async (response) => {
+            let data = response.data;
+
+            setFullName(data.name);
+            setEmail(data.email);
+            setPhone(data.phone)
+            setBranch({
+                id: data.branchId,
+                address: data.branchAddress
+            })
+            setWarehouse({
+                id: data.warehouseId,
+                address: data.warehouseAddress
+            })
+
+            setRole(data.role);
+
+            let scheduleData:string[] = data.schedule;
+
+            let schedule = []
+
+            for (let i = 0; i < scheduleData.length; i+=3) {
+                schedule.push({
+                    name: scheduleData[i],
+                    start: scheduleData[i+1],
+                    end: scheduleData[i+2],
+                })
+            }
+
+            setSchedule(schedule);
+
+
+            setCreationDate(data.creationDate)
+            setEditDate(data.editDate)
+
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+
     useEffect(() => {
 
-        setFullName("Иванова Дарья Павловна");
-        setEmail("daria_pavlovna@gmail.com");
-        setPhone("+79451235292")
-        setBranch({
-            id: "fdgsjt-afsgsrh-dts-dtjs",
-            address: "Москва, улица Рождественка, 20/8с16"
-        })
-        setWarehouse({
-            id: "fdgsjt-afsgsrh-dts-dtjs",
-            address: "Москва, улица Рождественка, 20/8с16"
-        })
-
-        setRole("SUPERUSER");
-
-        let schedule = []
-
-        schedule.push({
-            name: "Понедельник",
-            start: "08:30",
-            end: "20:00"
-        })
-        schedule.push({
-            name: "Вторник",
-            start: "08:30",
-            end: "20:00"
-        })
-        schedule.push({
-            name: "Среда",
-            start: "08:30",
-            end: "20:00"
-        })
-        schedule.push({
-            name: "Четверг",
-            start: "08:30",
-            end: "20:00"
-        })
-        schedule.push({
-            name: "Пятница",
-            start: "08:30",
-            end: "20:00"
-        })
-
-        setSchedule(schedule);
-
-
-        setCreationDate("11.10.2023 11:12:53")
-        setEditDate("11.10.2023 11:12:53")
+        loadData(userId);
 
     }, [userId]);
 

@@ -31,6 +31,7 @@ import {UserPage} from "./pages/UserPage/UserPage";
 import {OrderPage} from "./pages/OrderPage/OrderPage";
 import {SalaryCalc} from "./pages/SalaryCalc/SalaryCalc";
 import {IncomeCalc} from "./pages/IncomeCalc/IncomeCalc";
+import {LoadCalc} from "./pages/LoadCalc/LoadCalc";
 
 const router = createBrowserRouter([
     {
@@ -125,6 +126,10 @@ const router = createBrowserRouter([
     {
         path: "/income-calc",
         element: <IncomeCalc/>
+    },
+    {
+        path: "/load-calc",
+        element: <LoadCalc/>
     }
 ]);
 
