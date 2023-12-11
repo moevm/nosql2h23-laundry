@@ -1,4 +1,4 @@
-#branches-list-wrapper {
+#load-calc-wrapper {
   display: flex;
   flex-direction: column;
 
@@ -35,7 +35,25 @@
       border-radius: 25px;
       background: #c6f2ae;
 
-      #controls {
+      .controls-dates {
+        display: flex;
+        flex-direction: row;
+        align-items: baseline;
+        justify-content: start;
+        gap: 10px;
+        width: 100%;
+
+        .work-days {
+          position: relative;
+          top: 6px;
+
+          display: flex;
+          align-items: stretch;
+          gap: 10px;
+        }
+      }
+
+      .controls {
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -51,18 +69,9 @@
 
           flex: 1 0 0;
 
-          .etc-button {
-            border-radius: 50px;
-          }
-
           #plus-button {
             border-radius: 50px;
             padding: 0;
-          }
-
-          #trash-button {
-            border-radius: 50px;
-            padding: 5px;
           }
 
           .pagination {
@@ -79,6 +88,9 @@
       #table {
         margin-bottom: 0;
 
+        .badge {
+          --bs-badge-font-size: 0.95em;
+        }
 
         th {
 
@@ -94,19 +106,6 @@
             display: flex;
             gap: 7px;
             align-items: center;
-
-            .select-filter-wrapper .settings-window {
-              left: -110px;
-              width: 220px;
-            }
-          }
-
-          &:first-child {
-            width: 30px;
-          }
-
-          &:last-child {
-            width: 95px;
           }
         }
       }

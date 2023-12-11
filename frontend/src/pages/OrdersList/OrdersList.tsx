@@ -1,6 +1,6 @@
 import "./OrdersList.scss";
 import Header from "../../components/Header/Header";
-import {Badge, Button, Dropdown, DropdownButton, Pagination, Table, Form} from "react-bootstrap";
+import {Badge, Button, Dropdown, DropdownButton, Form, Pagination, Table} from "react-bootstrap";
 import {Plus} from "react-bootstrap-icons";
 import {JSX, useEffect, useState} from "react";
 import {TableSort} from "../../components/TableSort/TableSort";
@@ -350,7 +350,7 @@ export function OrdersList() {
             branch: branchFilter,
             clientId: (auth.role === "CLIENT") ? auth.id : "",
             elementsOnPage: elementsOnPage
-        },{
+        }, {
             baseURL: "http://localhost:8080",
         }).then(async (response) => {
 
@@ -454,7 +454,9 @@ export function OrdersList() {
                             }
                             {
                                 auth.role !== "ADMIN" &&
-                                <Button id="plus-button" onClick={() => {navigate("/new-order")}}><Plus size="35px"/></Button>
+                                <Button id="plus-button" onClick={() => {
+                                    navigate("/new-order")
+                                }}><Plus size="35px"/></Button>
                             }
                             <Pagination>
                                 <Pagination.Prev key="prev" onClick={() => {
@@ -522,7 +524,7 @@ export function OrdersList() {
                                     <td>{data.date}</td>
                                     <td><Badge pill bg={getBadgeType(data.status)}>{data.status}</Badge></td>
                                     <td>{data.branch}</td>
-                                    <td><Link to={"/order/" + data.id}>Открыть</Link></td>
+                                    <td><Link to={"/order-page/" + data.id}>Открыть</Link></td>
                                 </tr>
                             )
                         }

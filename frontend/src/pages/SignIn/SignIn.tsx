@@ -9,7 +9,7 @@ import {setUser} from "../../features/auth/authSlice";
 import {useCookies} from "react-cookie";
 
 
-export function SignIn () {
+export function SignIn() {
 
     const navigate = useNavigate();
 
@@ -41,15 +41,18 @@ export function SignIn () {
 
     function createAlert() {
         showAlert(true);
-        setTimeout(() => {showAlert(false);}, 3000);
+        setTimeout(() => {
+            showAlert(false);
+        }, 3000);
     }
+
     async function formAction(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
         await axios.post("/api/login", {
             login: loginState,
             password: passwordState
-        },{
+        }, {
             baseURL: "http://localhost:8080"
         }).then((response) => {
 
@@ -97,7 +100,7 @@ export function SignIn () {
                                 <div>Логин</div>
                             </Form.Label>
                             <Form.Control type="text" placeholder="Введите логин" name="login"
-                            value={loginState} onChange={(event) => setLoginState(event.target.value)}/>
+                                          value={loginState} onChange={(event) => setLoginState(event.target.value)}/>
                         </Form.Group>
 
                         <Form.Group className="md-3" controlId="password">
@@ -106,14 +109,17 @@ export function SignIn () {
                                 <div>Пароль</div>
                             </Form.Label>
                             <Form.Control type="password" placeholder="Введите пароль" name="password"
-                                          value={passwordState} onChange={(event) => setPasswordState(event.target.value)}/>
+                                          value={passwordState}
+                                          onChange={(event) => setPasswordState(event.target.value)}/>
                         </Form.Group>
 
                         <div id="control-btns">
                             <Button variant="primary" type="submit">
                                 Войти
                             </Button>
-                            <Button variant="primary" type="button" onClick={() => {navigate("/sign_up")}}>
+                            <Button variant="primary" type="button" onClick={() => {
+                                navigate("/sign_up")
+                            }}>
                                 Регистрация
                             </Button>
                         </div>

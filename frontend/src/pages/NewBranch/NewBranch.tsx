@@ -93,7 +93,9 @@ export function NewBranch() {
 
     function createAlert(setAlertShown: React.Dispatch<React.SetStateAction<boolean>>) {
         setAlertShown(true);
-        setTimeout(() => {setAlertShown(false);}, 3000);
+        setTimeout(() => {
+            setAlertShown(false);
+        }, 3000);
     }
 
     async function submitCreation() {
@@ -142,7 +144,7 @@ export function NewBranch() {
             adminName: adminRef.current!.value,
             warehouseAddress: warehouseRef.current!.value,
             schedule: schedule
-        },{
+        }, {
             baseURL: "http://localhost:8080"
         }).then(() => {
             navigate("/branches-list");

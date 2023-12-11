@@ -1,7 +1,7 @@
 import "./WarehousesList.scss";
 import Header from "../../components/Header/Header";
-import {Button, Pagination, Table, Form, Modal} from "react-bootstrap";
-import {Dot, Plus, Trash} from "react-bootstrap-icons";
+import {Button, Form, Modal, Pagination, Table} from "react-bootstrap";
+import {Plus, Trash} from "react-bootstrap-icons";
 import {JSX, useEffect, useRef, useState} from "react";
 import {TableSort} from "../../components/TableSort/TableSort";
 import {TextFilter} from "../../components/Filters/TextFilter/TextFilter";
@@ -34,7 +34,7 @@ export function WarehousesList() {
 
             setTotalPages(parseInt(response.data))
 
-            await axios.get("/api/warehouse/all",{
+            await axios.get("/api/warehouse/all", {
                 baseURL: "http://localhost:8080",
                 params: {
                     address: addressFilter,
@@ -148,6 +148,7 @@ export function WarehousesList() {
 
         return string;
     }
+
     function initBranchFilter() {
         let string = "";
 
@@ -288,7 +289,7 @@ export function WarehousesList() {
 
         await axios.post("/api/warehouse/delete_list", {
             idList: idsToDelete
-        },{
+        }, {
             baseURL: "http://localhost:8080"
         }).then(() => {
             loadData();
@@ -307,8 +308,11 @@ export function WarehousesList() {
                     <div id="controls">
                         <Button onClick={() => navigate(-1)}>Назад</Button>
                         <div id="controls-1">
-                            <Button id="trash-button" disabled={!anyChecked} onClick={() => setConfirmShown(true)}><Trash size="25px"/></Button>
-                            <Button id="plus-button" onClick={() => {navigate("/new-warehouse")}}><Plus size="35px"/></Button>
+                            <Button id="trash-button" disabled={!anyChecked}
+                                    onClick={() => setConfirmShown(true)}><Trash size="25px"/></Button>
+                            <Button id="plus-button" onClick={() => {
+                                navigate("/new-warehouse")
+                            }}><Plus size="35px"/></Button>
                             <Pagination>
                                 <Pagination.Prev key="prev" onClick={() => {
                                     if (currentPage !== 1)
@@ -345,7 +349,8 @@ export function WarehousesList() {
                                 <div>
                                     <div>Адрес</div>
                                     <div className="sort-filter">
-                                        <TableSort sortState={sortState} setSortState={setSortState} sortName="address"/>
+                                        <TableSort sortState={sortState} setSortState={setSortState}
+                                                   sortName="address"/>
                                         <TextFilter filterData={addressFilter} setFilterData={setAddressFilter}/>
                                     </div>
                                 </div>
@@ -374,7 +379,7 @@ export function WarehousesList() {
                                     <td>{data.address}</td>
                                     <td>{data.branch}</td>
                                     <td>
-                                        <Link to={"/warehouse/" + data.id}>Открыть</Link>
+                                        <Link to={"/warehouse-page/" + data.id}>Открыть</Link>
                                     </td>
                                 </tr>
                             )
