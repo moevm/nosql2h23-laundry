@@ -2,13 +2,16 @@ package com.example.springtest.controller;
 
 
 import com.example.springtest.dto.employee.*;
+import com.example.springtest.dto.user.GetUserResponse;
+import com.example.springtest.model.Branch;
 import com.example.springtest.model.Employee;
 import com.example.springtest.model.User;
+import com.example.springtest.model.types.UserRole;
 import com.example.springtest.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,6 +46,11 @@ public class EmployeeController {
     @PostMapping("/api/employee/all_count")
     public long getTotalEmployeesCount(@RequestBody GetTotalEmployeesCountRequest request) {
         return employeeService.getTotalCount(request);
+    }
+
+    @PostMapping("/api/employee/calculate_salaries")
+    public CalculateSalariesResponse getTotalEmployeesCount(@RequestBody CalculateSalariesRequest request) {
+        return employeeService.calculateSalaries(request);
     }
 
     @PostMapping("/api/employee/delete_list")

@@ -53,11 +53,11 @@ public class AuthController {
         }
 
         Client newClient = clientService.createClient(CreateClientRequest.builder()
-                        .login(request.getLogin())
-                        .password(request.getPassword())
-                        .name(request.getFullName())
-                        .email(request.getEmail())
-                        .build()
+                .login(request.getLogin())
+                .password(request.getPassword())
+                .name(request.getFullName())
+                .email(request.getEmail())
+                .build()
         );
 
         return SignUpResponse.builder()

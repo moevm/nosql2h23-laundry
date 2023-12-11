@@ -1,12 +1,10 @@
 package com.example.springtest.service;
 
-import com.example.springtest.dto.order.CreateOrderRequest;
-import com.example.springtest.dto.order.GetAllRequest;
-import com.example.springtest.dto.order.GetTotalOrdersCountRequest;
+import com.example.springtest.dto.order.*;
+import com.example.springtest.exceptions.controller.NoSuchOrderException;
 import com.example.springtest.model.Order;
 import com.example.springtest.model.types.OrderState;
 import com.example.springtest.model.types.ServiceType;
-import com.example.springtest.model.types.UserRole;
 import com.example.springtest.repository.OrderRepository;
 import com.example.springtest.repository.ServiceRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,17 +12,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
+
+    private final static DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
     private final OrderRepository orderRepository;
     private final ServiceRepository serviceRepository;
@@ -101,6 +99,28 @@ public class OrderService {
     }
 
     @Transactional
+    public GetOrderResponse findOrderById(String id) {
+        Order order = orderRepository.findOrderById(UUID.fromString(id)).orElseThrow(NoSuchOrderException::new);
+
+        return GetOrderResponse.builder()
+                .clientId(order.getClient().getId().toString())
+                .clientName(order.getClient().getFullName())
+                .status(order.getState().toString())
+                .branchId(order.getBranch().getId().toString())
+                .branchAddress(order.getBranch().getAddress())
+                .price(order.getPrice())
+                .services(order.getServices().stream().map(contains -> GetOrderResponse.Service.builder()
+                        .count(contains.getAmount())
+                        .type(contains.getService().getType().toString())
+                        .build()
+                ).toList())
+                .creationDate(order.getCreationDate().format(formatter1))
+                .editDate(order.getEditDate().format(formatter1))
+                .build();
+
+    }
+
+    @Transactional
     public long getTotalCount(GetTotalOrdersCountRequest request) {
         ZonedDateTime start, end;
 
@@ -136,6 +156,34 @@ public class OrderService {
         }
 
         return (int) (Math.ceil(count / (double) request.getElementsOnPage()));
+    }
+
+    @Transactional
+    public void approveOrders(ApproveOrderRequest request) {
+        ZonedDateTime editDateTime = ZonedDateTime.now();
+
+        orderRepository.setNewStateForOrders(request.getOrderIds().stream().map(UUID::fromString).toList(), OrderState.NEW, OrderState.ACTIVE, editDateTime);
+    }
+
+    @Transactional
+    public void prepareOrders(GetReadyOrderRequest request) {
+        ZonedDateTime editDateTime = ZonedDateTime.now();
+
+        orderRepository.setNewStateForOrders(request.getOrderIds().stream().map(UUID::fromString).toList(), OrderState.ACTIVE, OrderState.READY, editDateTime);
+    }
+
+    @Transactional
+    public void completeOrders(CompleteOrderRequest request) {
+        ZonedDateTime editDateTime = ZonedDateTime.now();
+
+        orderRepository.setNewStateForOrders(request.getOrderIds().stream().map(UUID::fromString).toList(), OrderState.READY, OrderState.COMPLETED, editDateTime);
+    }
+
+    @Transactional
+    public void cancelOrders(CancelOrderRequest request) {
+        ZonedDateTime editDateTime = ZonedDateTime.now();
+
+        orderRepository.cancelOrders(request.getOrderIds().stream().map(UUID::fromString).toList(), editDateTime);
     }
 }
 

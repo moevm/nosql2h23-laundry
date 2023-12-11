@@ -1,9 +1,12 @@
 package com.example.springtest.service;
 
+import com.example.springtest.dto.branch.GetByAdminIdResonse;
+import com.example.springtest.dto.warehouse.AddProductsRequest;
 import com.example.springtest.dto.warehouse.CreateWarehouseRequest;
 import com.example.springtest.dto.warehouse.GetAllRequest;
 import com.example.springtest.dto.warehouse.GetTotalWarehousesCountRequest;
-import com.example.springtest.exceptions.controller.BranchAlreadyExistsException;
+import com.example.springtest.exceptions.controller.NoSuchBranchException;
+import com.example.springtest.exceptions.controller.NoSuchWarehouseException;
 import com.example.springtest.exceptions.controller.WarehouseAlreadyExistsException;
 import com.example.springtest.model.Branch;
 import com.example.springtest.model.Warehouse;
@@ -12,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +25,11 @@ import java.util.UUID;
 public class WarehouseService {
 
     private final WarehouseRepository repository;
+
+    @Transactional
+    public Warehouse findWarehouseById(String id) {
+        return repository.findWarehouseById(UUID.fromString(id)).orElseThrow(NoSuchWarehouseException::new);
+    }
 
     @Transactional
     public List<Warehouse> findWarehousesWithoutBranch() {
@@ -58,4 +65,15 @@ public class WarehouseService {
 
         repository.createWarehouse(UUID.randomUUID(), request.getAddress(), request.getBranchAddress(), request.getSchedule(), creationDateTime, creationDateTime);
     }
+
+    @Transactional
+    public GetByAdminIdResonse findWarehouseByDirectorId(String directorId) {
+        Warehouse warehouse = repository.findWarehouseByDirectorId(UUID.fromString(directorId)).orElseThrow(NoSuchWarehouseException::new);
+
+        return GetByAdminIdResonse.builder()
+                .id(warehouse.getId().toString())
+                .address(warehouse.getAddress())
+                .build();
+    }
+
 }

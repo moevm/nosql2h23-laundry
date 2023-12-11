@@ -2,7 +2,6 @@ package com.example.springtest.dto.employee;
 
 import lombok.*;
 
-import javax.annotation.processing.SupportedSourceVersion;
 import java.util.List;
 
 @Getter

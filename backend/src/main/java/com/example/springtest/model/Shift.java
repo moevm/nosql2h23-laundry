@@ -5,7 +5,7 @@ import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Node("Shift")
@@ -19,7 +19,7 @@ public class Shift {
     @Id
     private UUID id;
 
-    private Date date;
+    private LocalDate date;
 
     @Relationship(type = "OPENED_BY", direction = Relationship.Direction.OUTGOING)
     private Employee employee;

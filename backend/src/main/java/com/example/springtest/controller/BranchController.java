@@ -3,12 +3,13 @@ package com.example.springtest.controller;
 import com.example.springtest.dto.branch.*;
 import com.example.springtest.dto.employee.GetDirectorsWithoutBranchResponse;
 import com.example.springtest.model.Branch;
-import com.example.springtest.model.Warehouse;
 import com.example.springtest.service.BranchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -17,7 +18,21 @@ public class BranchController {
 
     private final BranchService branchService;
 
-    @GetMapping("api/branch/get_branches_without_warehouse")
+    @GetMapping("/api/branch/get_by_admin_id")
+    public GetByAdminIdResonse getByAdminId(@RequestParam("admin_id") String adminId) {
+
+        return branchService.findBranchByAdminId(adminId);
+
+    }
+
+    @GetMapping("/api/branch/get_by_director_id")
+    public GetByAdminIdResonse getByDirectorId(@RequestParam("director_id") String directorId) {
+
+        return branchService.findBranchByDirectorId(directorId);
+
+    }
+
+    @GetMapping("/api/branch/get_branches_without_warehouse")
     public GetDirectorsWithoutBranchResponse getWarehousesWithoutBranch() {
 
         List<Branch> branches = branchService.findBranchesWithoutWarehouse();
@@ -26,6 +41,16 @@ public class BranchController {
                 branches.stream().map(Branch::getAddress).toList()
         ).build();
 
+    }
+
+    @PostMapping("/api/branch/calculate_profit")
+    public CalculateBranchesProfitResponse calculateBranchesProfit(@RequestBody CalculateBranchesProfitRequest request) {
+        return branchService.calculateProfit(request);
+    }
+
+    @PostMapping("/api/branch/calculate_load")
+    public CalculateBranchesLoadResponse calculateBranchesProfit(@RequestBody CalculateBranchesLoadRequest request) {
+        return branchService.calculateLoad(request);
     }
 
     @PostMapping("/api/branch/create")
@@ -77,10 +102,10 @@ public class BranchController {
     ) {
 
         return branchService.getTotalCount(GetTotalBranchesCountRequest.builder()
-                        .address(address)
-                        .warehouse(warehouse)
-                        .director(director)
-                        .elementsOnPage(elementsOnPage)
+                .address(address)
+                .warehouse(warehouse)
+                .director(director)
+                .elementsOnPage(elementsOnPage)
                 .build());
     }
 

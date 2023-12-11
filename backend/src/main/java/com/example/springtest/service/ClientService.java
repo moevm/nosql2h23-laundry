@@ -3,18 +3,17 @@ package com.example.springtest.service;
 import com.example.springtest.dto.client.CreateClientRequest;
 import com.example.springtest.dto.client.GetAllRequest;
 import com.example.springtest.dto.client.GetTotalClientsCountRequest;
+import com.example.springtest.exceptions.controller.NoSuchUserException;
 import com.example.springtest.exceptions.controller.UserAlreadyExistsException;
+import com.example.springtest.model.Client;
 import com.example.springtest.model.User;
 import com.example.springtest.model.types.UserRole;
+import com.example.springtest.repository.ClientRepository;
 import com.example.springtest.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import com.example.springtest.model.Client;
-import com.example.springtest.repository.ClientRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -44,8 +43,8 @@ public class ClientService {
     }
 
     @Transactional
-    public Optional<Client> getClientById(UUID id) {
-        return clientRepository.findById(id);
+    public Client getClientById(String id) {
+        return clientRepository.findById(UUID.fromString(id)).orElseThrow(NoSuchUserException::new);
     }
 
     @Transactional
