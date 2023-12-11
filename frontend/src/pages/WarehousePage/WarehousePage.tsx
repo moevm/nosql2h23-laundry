@@ -6,99 +6,64 @@ import {Link, Navigate, useNavigate, useParams} from "react-router-dom";
 import {useAppDispatch, useAppSelector} from "../../hooks";
 import {useCookies} from "react-cookie";
 import {Button} from "react-bootstrap";
+import axios from "axios";
 
 export function WarehousePage() {
 
     const navigate = useNavigate();
     let {warehouseId} = useParams();
 
+    async function loadData(warehouseId: string|undefined) {
+        await axios.get("/api/warehouse/get", {
+            baseURL: "http://localhost:8080",
+            params: {
+                id: warehouseId
+            }
+        }).then(async (response) => {
+            let data = response.data;
+
+            setAddress(data.address)
+            setBranch({
+                id: data.branchId,
+                address: data.branchAddress
+            })
+
+            let scheduleData:string[] = data.schedule;
+
+            let schedule = []
+
+            for (let i = 0; i < scheduleData.length; i+=3) {
+                schedule.push({
+                    name: scheduleData[i],
+                    start: scheduleData[i+1],
+                    end: scheduleData[i+2],
+                })
+            }
+
+            setSchedule(schedule);
+
+            setProducts(data.products);
+
+            setCreationDate(data.creationDate)
+            setEditDate(data.editDate)
+
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+
     useEffect(() => {
-        console.log(warehouseId);
-
-        setAddress("Москва, Кривоколенный переулок, 5с2")
-        setBranch({
-            id: "redtnstdeatdnserdb",
-            address: "Москва, улица Рождественка, 20/8с16"
-        })
-
-        let schedule = []
-
-        schedule.push({
-            name: "Понедельник",
-            start: "08:30",
-            end: "20:00"
-        })
-        schedule.push({
-            name: "Вторник",
-            start: "08:30",
-            end: "20:00"
-        })
-        schedule.push({
-            name: "Среда",
-            start: "08:30",
-            end: "20:00"
-        })
-        schedule.push({
-            name: "Четверг",
-            start: "08:30",
-            end: "20:00"
-        })
-        schedule.push({
-            name: "Пятница",
-            start: "08:30",
-            end: "20:00"
-        })
-
-        setSchedule(schedule);
-
-        let products = [];
-
-        products.push({
-            type: productNameTranslate["WASHING_POWDER"],
-            amount: 54
-        });
-
-        products.push({
-            type: productNameTranslate["BLEACH"],
-            amount: 54
-        });
-
-        products.push({
-            type: productNameTranslate["WASHING_MACHINE"],
-            amount: 54
-        });
-
-        products.push({
-            type: productNameTranslate["DRYER"],
-            amount: 54
-        });
-
-        products.push({
-            type: productNameTranslate["IRONING_BOARD"],
-            amount: 54
-        });
-
-        products.push({
-            type: productNameTranslate["IRON"],
-            amount: 231354
-        });
-
-        setProducts(products);
-
-        setCreationDate("11.10.2023 11:12:53")
-        setEditDate("11.10.2023 11:12:53")
-
+        loadData(warehouseId);
     }, [warehouseId]);
 
 
-    const productNameTranslate = {
-        "WASHING_POWDER": "Порошок",
-        "BLEACH": "Отбеливатель",
-        "WASHING_MACHINE": "Стиральная машина",
-        "DRYER": "Сушильная машина",
-        "IRONING_BOARD": "Гладильная доска",
-        "IRON": "Утюг",
-    };
+    const productNameTranslate = new Map();
+    productNameTranslate.set("WASHING_POWDER", "Порошок");
+    productNameTranslate.set("BLEACH", "Отбеливатель");
+    productNameTranslate.set("WASHING_MACHINE", "Стиральная машина");
+    productNameTranslate.set("DRYER", "Сушильная машина");
+    productNameTranslate.set("IRONING_BOARD", "Гладильная доска");
+    productNameTranslate.set("IRON", "Утюг");
 
     const [address, setAddress] = useState("");
     const [branch, setBranch] = useState<{ id: string, address: string }>({
@@ -163,7 +128,7 @@ export function WarehousePage() {
                                     <div className="bold">Доступные товары:</div>
                                     <ul>
                                         {products.map((element) => <li key={element.type}>
-                                            {element.type + ": " + element.amount + " шт."}
+                                            {productNameTranslate.get(element.type) + ": " + element.amount + " шт."}
                                         </li>)}
                                     </ul>
                                 </div>

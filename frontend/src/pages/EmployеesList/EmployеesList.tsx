@@ -386,7 +386,7 @@ export function EmployeesList() {
                     <div id="controls">
                         <Button onClick={() => navigate(-1)}>Назад</Button>
                         <div id="controls-1">
-                            <Button id="calc-button">Расчитать ЗП</Button>
+                            <Button id="calc-button" onClick={() => {navigate("/salary-calc")}}>Расчитать ЗП</Button>
                             <Button id="trash-button" disabled={!anyChecked}
                                     onClick={() => setConfirmShown(true)}><Trash size="25px"/></Button>
                             <Button id="plus-button" onClick={() => {

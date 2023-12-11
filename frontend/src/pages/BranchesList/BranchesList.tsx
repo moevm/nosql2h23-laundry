@@ -350,8 +350,8 @@ export function BranchesList() {
                             <Button onClick={() => navigate(-1)}>Назад</Button>
                         </div>
                         <div id="controls-1">
-                            <Button className="etc-button">Нагрузка</Button>
-                            <Button className="etc-button">Прибыль</Button>
+                            <Button className="etc-button" onClick={() => navigate("/load-calc")}>Нагрузка</Button>
+                            <Button className="etc-button" onClick={() => navigate("/income-calc")}>Прибыль</Button>
                             <Button id="trash-button" disabled={!anyChecked}
                                     onClick={() => setConfirmShown(true)}><Trash size="25px"/></Button>
                             <Button id="plus-button" onClick={() => {

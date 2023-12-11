@@ -6,55 +6,43 @@ import {Link, Navigate, useNavigate, useParams} from "react-router-dom";
 import {useAppDispatch, useAppSelector} from "../../hooks";
 import {useCookies} from "react-cookie";
 import {Button} from "react-bootstrap";
+import axios from "axios";
 
 export function OrderPage() {
 
     const navigate = useNavigate();
     let {orderId} = useParams();
 
+    async function loadOrder(orderId: string | undefined) {
+        await axios.get("/api/order/get", {
+            baseURL: "http://localhost:8080",
+            params: {
+                id: orderId
+            }
+        }).then(async (response) => {
+            let data = response.data;
+            setClient({
+                id: data.clientId,
+                fullName: data.clientName
+            })
+            setStatus(data.status)
+            setBranch({
+                id: data.branchId,
+                address: data.branchAddress
+            });
+            setPrice(data.price)
+            setServices(data.services)
+
+            setCreationDate(data.creationDate)
+            setEditDate(data.editDate)
+
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+
     useEffect(() => {
-
-        setClient({
-            id: "sdfsdfgs",
-            fullName: "Иванова Дарья Павловна"
-        });
-
-        setStatus("NEW")
-
-        setBranch({
-            id: "sdfgdghsdfh",
-            address: "Москва, улица Рождественка, 20/8с16"
-        });
-
-        setPrice("1000")
-
-        let product: { type: string, amount: number }[] = [];
-        product.push({
-            type: "WASHING",
-            amount: 20
-        })
-        product.push({
-            type: "DRYING",
-            amount: 3
-        })
-        product.push({
-            type: "IRONING",
-            amount: 467356
-        })
-        product.push({
-            type: "POWDER",
-            amount: 20
-        })
-        product.push({
-            type: "BLEACH",
-            amount: 20
-        })
-
-        setProduct(product)
-
-        setCreationDate("11.10.2023 11:12:53")
-        setEditDate("11.10.2023 11:12:53")
-
+        loadOrder(orderId);
     }, [orderId]);
 
     let statusTranslate = new Map();
@@ -96,7 +84,7 @@ export function OrderPage() {
         address: ""
     });
     const [price, setPrice] = useState("")
-    const [product, setProduct] = useState<{ type: string, amount: number }[]>([]);
+    const [services, setServices] = useState<{ type: string, count: number }[]>([]);
 
     const [creationDate, setCreationDate] = useState("");
     const [editDate, setEditDate] = useState("");
@@ -119,20 +107,52 @@ export function OrderPage() {
         }
     }
 
-    function cancelOrder() {
-
+    async function cancelOrder() {
+        await axios.post("/api/order/cancel", {
+            orderIds: [orderId]
+        }, {
+            baseURL: "http://localhost:8080"
+        }).then(() => {
+            loadOrder(orderId);
+        }).catch((error) => {
+            console.log(error)
+        })
     }
 
-    function approveOrder() {
-
+    async function approveOrder() {
+        await axios.post("/api/order/approve", {
+            orderIds: [orderId]
+        }, {
+            baseURL: "http://localhost:8080"
+        }).then(() => {
+            loadOrder(orderId);
+        }).catch((error) => {
+            console.log(error)
+        })
     }
 
-    function readyOrder() {
-
+    async function readyOrder() {
+        await axios.post("/api/order/ready", {
+            orderIds: [orderId]
+        }, {
+            baseURL: "http://localhost:8080"
+        }).then(() => {
+            loadOrder(orderId);
+        }).catch((error) => {
+            console.log(error)
+        })
     }
 
-    function completeOrder() {
-
+    async function completeOrder() {
+        await axios.post("/api/order/complete", {
+            orderIds: [orderId]
+        }, {
+            baseURL: "http://localhost:8080"
+        }).then(() => {
+            loadOrder(orderId);
+        }).catch((error) => {
+            console.log(error)
+        })
     }
 
     return (
@@ -177,8 +197,8 @@ export function OrderPage() {
                                 <div className="data-part-hor-main">
                                     <div className="bold">Услуги:</div>
                                     <ul>
-                                        {product.map((element) => <li key={element.type}>
-                                            {serviceNameTranslate.get(element.type) + ": " + element.amount + " шт."}
+                                        {services.map((element) => <li key={element.type}>
+                                            {serviceNameTranslate.get(element.type) + ": " + element.count + " шт."}
                                         </li>)}
                                     </ul>
                                 </div>

@@ -1,17 +1,51 @@
 import "./ImportExport.scss"
 import Header from "../../components/Header/Header";
 import {Button, Form} from "react-bootstrap";
-import React from "react";
+import React, {useRef} from "react";
 import {useNavigate} from "react-router-dom";
+import axios from "axios";
+import fileDownload from "js-file-download"
 
 export function ImportExport() {
 
     const navigate = useNavigate();
 
-    function exportData() {
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    async function exportData() {
+
+        await axios.get("/export", {
+            baseURL: "http://localhost:8080",
+            responseType: "arraybuffer"
+        }).then((response) => {
+            console.log(response.data)
+            fileDownload(response.data, "export.json");
+        }).catch((error) => {
+            console.log(error)
+        })
+
     }
 
-    function importData() {
+    async function importData() {
+
+        let formData = new FormData();
+
+        if (fileInputRef.current !== null && fileInputRef.current.files !== null) {
+            // console.log(fileInputRef.current.files[0])
+            formData.append("file", fileInputRef.current.files[0])
+        }
+
+        await axios.post("/import", formData,{
+            baseURL: "http://localhost:8080",
+            headers: {
+                "Content-Type": 'multipart/form-data'
+            }
+        }).then((response) => {
+            // console.log(response.data)
+            // fileDownload(response.data, "export.json");
+        }).catch((error) => {
+            console.log(error)
+        })
     }
 
     return (
@@ -49,8 +83,7 @@ export function ImportExport() {
                         </div>
                     </div>
                     <Form>
-
-                        <Form.Control type="file"/>
+                        <Form.Control type="file" ref={fileInputRef}/>
 
                         <div className="buttons">
                             <Button variant={"danger"} onClick={() => importData()}>Импорт</Button>
