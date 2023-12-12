@@ -1,6 +1,6 @@
 services:
   backend:
-    build: ../backend
+    build: ./backend
     links:
       - neo4j
     ports:
@@ -17,7 +17,7 @@ services:
         retries: 20
         start_period: 10s
   frontend:
-    build: ../frontend
+    build: ./frontend
     links:
       - backend
     ports:
