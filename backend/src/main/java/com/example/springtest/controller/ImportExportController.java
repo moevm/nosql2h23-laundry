@@ -29,7 +29,7 @@ public class ImportExportController {
     @PostMapping("/import")
     public void importData(@RequestParam("file") MultipartFile file) throws IOException {
 
-        Path path = Paths.get("/home/ilya201232/neo4j/import/import.json");
+        Path path = Paths.get("/import/import.json");
         Files.write(path, file.getBytes());
 
         importExportService.importData();
