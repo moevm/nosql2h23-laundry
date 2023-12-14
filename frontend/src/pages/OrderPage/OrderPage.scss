@@ -129,20 +129,39 @@
 
       #bottom {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: flex-end;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
         align-self: stretch;
 
         padding: 10px 15px;
 
-        .date {
+        #variants {
           display: flex;
           flex-direction: row;
-          gap: 10px;
+          justify-content: space-evenly;
+          //gap: 20px;
 
-          font-size: 15px;
+          flex: 1 0 0 ;
+
         }
+
+        #dates {
+
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+
+          .date {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+
+            font-size: 15px;
+          }
+        }
+
+
       }
     }
   }

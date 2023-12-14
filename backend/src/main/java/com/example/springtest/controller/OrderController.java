@@ -51,14 +51,23 @@ public class OrderController {
 
     @PostMapping("/api/order/all")
     public GetAllResponse getAllOrders(@RequestBody GetAllRequest request) {
-        List<Order> employeeList = orderService.getAllOrders(request);
+        List<Order> orderList = orderService.getAllOrders(request);
 
-        List<GetAllResponse.Data> data = employeeList.stream()
-                .map(client -> GetAllResponse.Data.builder()
-                        .id(client.getId().toString())
-                        .date(client.getCreationDate().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .status(client.getState().toString())
-                        .branch(client.getBranch().getAddress())
+        List<GetAllResponse.Data> data = orderList.stream()
+                .map(order -> GetAllResponse.Data.builder()
+                        .id(order.getId().toString())
+                        .date(order.getCreationDate().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+                        .client((order.getClient() == null) ?
+                                GetAllResponse.Client.builder()
+                                        .id("")
+                                        .name("")
+                                        .build() :
+                                GetAllResponse.Client.builder()
+                                        .id(order.getClient().getId().toString())
+                                        .name(order.getClient().getFullName())
+                                        .build())
+                        .status(order.getState().toString())
+                        .branch(order.getBranch().getAddress())
                         .build()
                 ).toList();
 

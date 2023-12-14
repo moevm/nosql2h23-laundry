@@ -36,10 +36,9 @@ public interface ClientRepository extends Neo4jRepository<Client, UUID> {
     Optional<Client> findByLogin(String login);
 
     @Query("MATCH (c:Client {id: $id}) " +
-            "OPTIONAL MATCH (c)<-[ord:ORDERED_BY]-(orders:Order) " +
-            "RETURN c, collect(ord), collect(orders) " +
+            "RETURN c " +
             "LIMIT 1")
-    Optional<Client> findById(UUID id);
+    Optional<Client> findClientById(UUID id);
 
     @Query("MATCH (c:Client) " +
             "WHERE c.fullName CONTAINS $name AND c.email CONTAINS $email " +

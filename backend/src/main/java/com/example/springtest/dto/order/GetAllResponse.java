@@ -16,11 +16,27 @@ public class GetAllResponse {
     @NoArgsConstructor
     @Getter
     @Setter
+    public static class Client {
+
+        private String name;
+
+        private String id;
+
+    }
+
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
     public static class Data {
+
 
         private String id;
 
         private String date;
+
+        private Client client;
 
         private String status;
 

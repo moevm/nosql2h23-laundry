@@ -16,6 +16,10 @@ import axios from "axios";
 type TableData = {
     id: string,
     date: string,
+    client: {
+        name: string,
+        id: string
+    },
     status: string,
     branch: string
 }
@@ -166,6 +170,16 @@ export function OrdersList() {
         return returnObj;
     }
 
+    function initClientIdFilter() {
+        let string = "";
+
+        if (searchParams.has("clientId")) {
+            string = searchParams.get("clientId")!;
+        }
+
+        return string;
+    }
+
     function initStatusFilter() {
         let valueString = searchParams.get("status");
         let obj: { [key: string]: boolean } = {
@@ -198,6 +212,7 @@ export function OrdersList() {
     }
 
     const [dateFilter, setDateFilter] = useState<{ start: Date; end: Date; } | null>(initDateFilter());
+    const [clientIdFilter, setClientIdFilter] = useState<string>(initClientIdFilter());
     const [stateFilter, setStateFilter] = useState<{ [key: string]: boolean }>(initStatusFilter());
     const [branchFilter, setBranchFilter] = useState(initBranchFilter);
 
@@ -218,6 +233,20 @@ export function OrdersList() {
         } else {
             if (searchParams.has("date")) {
                 searchParams.delete("date")
+                setSearchParams(searchParams, {replace: true});
+            }
+        }
+
+        if (clientIdFilter !== "") {
+            if (searchParams.has("clientId")) {
+                searchParams.set("clientId", clientIdFilter)
+            } else {
+                searchParams.append("clientId", clientIdFilter)
+            }
+            setSearchParams(searchParams, {replace: true});
+        } else {
+            if (searchParams.has("clientId")) {
+                searchParams.delete("clientId")
                 setSearchParams(searchParams, {replace: true});
             }
         }
@@ -274,7 +303,7 @@ export function OrdersList() {
             loadData();
         }
 
-    }, [dateFilter, stateFilter, branchFilter]);
+    }, [dateFilter, clientIdFilter, stateFilter, branchFilter]);
 
     useEffect(() => {
         if (!isInitialized) {
@@ -344,11 +373,13 @@ export function OrdersList() {
             end: dateFilter?.end.toUTCString()
         }
 
+        let clientId = clientIdFilter;
+
         await axios.post("/api/order/all_count", {
             dates: dateData,
             states: states,
             branch: branchFilter,
-            clientId: (auth.role === "CLIENT") ? auth.id : "",
+            clientId: (auth.role === "CLIENT") ? auth.id : clientId,
             elementsOnPage: elementsOnPage
         }, {
             baseURL: "http://localhost:8080",
@@ -494,6 +525,17 @@ export function OrdersList() {
                                     </div>
                                 </div>
                             </th>
+                            {auth.role === "SUPERUSER" &&
+                                <th>
+                                    <div>
+                                        <div>Клиент</div>
+                                        <div className="sort-filter">
+                                            <TableSort sortState={sortState} setSortState={setSortState}
+                                                       sortName="client"/>
+                                        </div>
+                                    </div>
+                                </th>
+                            }
                             <th>
                                 <div>
                                     <div>Статус</div>
@@ -522,6 +564,9 @@ export function OrdersList() {
                             tableData.map((data: TableData) =>
                                 <tr key={data.id}>
                                     <td>{data.date}</td>
+                                    {auth.role === "SUPERUSER" && data.client.id !== "" &&
+                                        <td><Link to={"/user-page/" + data.client.id}>{data.client.name}</Link></td>
+                                    }
                                     <td><Badge pill bg={getBadgeType(data.status)}>{data.status}</Badge></td>
                                     <td>{data.branch}</td>
                                     <td><Link to={"/order-page/" + data.id}>Открыть</Link></td>

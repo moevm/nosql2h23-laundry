@@ -35,21 +35,22 @@ export function UserPage() {
 
             setRole(data.role);
 
-            let scheduleData:string[] = data.schedule;
+            if (data.schedule !== null) {
+                let scheduleData:string[] = data.schedule;
 
-            let schedule = []
+                let schedule = []
 
-            for (let i = 0; i < scheduleData.length; i+=3) {
-                schedule.push({
-                    name: scheduleData[i],
-                    start: scheduleData[i+1],
-                    end: scheduleData[i+2],
-                })
+                for (let i = 0; i < scheduleData.length; i+=3) {
+                    schedule.push({
+                        name: scheduleData[i],
+                        start: scheduleData[i+1],
+                        end: scheduleData[i+2],
+                    })
+                }
+
+                setSchedule(schedule);
             }
-
-            setSchedule(schedule);
-
-
+            
             setCreationDate(data.creationDate)
             setEditDate(data.editDate)
 
@@ -121,10 +122,12 @@ export function UserPage() {
                                 <div className="bold">Email:</div>
                                 <div>{email}</div>
                             </div>
-                            <div className="data-part-lin">
-                                <div className="bold">Телефон:</div>
-                                <div>{phone}</div>
-                            </div>
+                            {role !== "CLIENT" &&
+                                <div className="data-part-lin">
+                                    <div className="bold">Телефон:</div>
+                                    <div>{phone}</div>
+                                </div>
+                            }
                             {((role === "ADMIN" || role === "DIRECTOR") && branch.id !== "") &&
                                 <div className="data-part-lin">
                                     <div className="bold">Филиал:</div>
@@ -142,16 +145,19 @@ export function UserPage() {
                                 <div>{roleTranslate.get(role)}</div>
                             </div>
                         </div>
-                        <div id="big-part">
-                            <div className="data-part-hor-main">
-                                <div className="bold">График работы:</div>
-                                <ul>
-                                    {schedule.map((element) => <li key={element.name}>
-                                        {element.name + ": c " + element.start + " до " + element.end}
-                                    </li>)}
-                                </ul>
+
+                        {role !== "CLIENT" &&
+                            <div id="big-part">
+                                <div className="data-part-hor-main">
+                                    <div className="bold">График работы:</div>
+                                    <ul>
+                                        {schedule.map((element) => <li key={element.name}>
+                                            {element.name + ": c " + element.start + " до " + element.end}
+                                        </li>)}
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
+                        }
                     </div>
                     <div id="bottom">
                         <div className="date">

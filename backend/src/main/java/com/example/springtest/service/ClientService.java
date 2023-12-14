@@ -44,7 +44,7 @@ public class ClientService {
 
     @Transactional
     public Client getClientById(String id) {
-        return clientRepository.findById(UUID.fromString(id)).orElseThrow(NoSuchUserException::new);
+        return clientRepository.findClientById(UUID.fromString(id)).orElseThrow(NoSuchUserException::new);
     }
 
     @Transactional

@@ -79,6 +79,7 @@ com/example/springtest/dto/branch/DeleteBranchesRequest$DeleteBranchesRequestBui
 com/example/springtest/dto/branch/GetAllResponse.class
 com/example/springtest/model/Service.class
 com/example/springtest/dto/employee/GetEmployeeResponse.class
+com/example/springtest/dto/order/GetAllResponse$Client$ClientBuilder.class
 com/example/springtest/controller/UserController.class
 com/example/springtest/controller/EmployeeController.class
 com/example/springtest/dto/branch/CalculateBranchesProfitRequest$CalculateBranchesProfitRequestBuilder.class
@@ -140,6 +141,7 @@ com/example/springtest/dto/client/CreateClientRequest.class
 com/example/springtest/model/Warehouse$WarehouseBuilder.class
 com/example/springtest/dto/warehouse/GetAllResponse$GetAllResponseBuilder.class
 com/example/springtest/dto/employee/CalculateSalariesRequest.class
+com/example/springtest/dto/order/GetAllResponse$Client.class
 com/example/springtest/repository/OrderRepository.class
 com/example/springtest/exceptions/controller/ServiceAlreadyExistsException.class
 com/example/springtest/dto/branch/CalculateBranchesProfitRequest.class

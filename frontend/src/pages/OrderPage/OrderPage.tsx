@@ -155,6 +155,18 @@ export function OrderPage() {
         })
     }
 
+    function calcDate() {
+        let parts = creationDate.split(" ")[0].split(".");
+
+        console.log(parts);
+
+        return (new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]))).toLocaleDateString("en-US", {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        })
+    }
+
     return (
         <div id="order-page-wrapper">
             <Header title="Заказ"/>
@@ -223,14 +235,21 @@ export function OrderPage() {
 
                     </div>
                     <div id="bottom">
-                        <div className="date">
-                            <div>Дата создания:</div>
-                            <div>{creationDate}</div>
+                        <div id="variants">
+                            <Link to={"/orders-list?date=" + encodeURI(calcDate() + ":" + calcDate())}>Все заказы за тот день</Link>
+                            <Link to={"/orders-list?clientId=" + encodeURI(client.id)}>Все заказы данного клиента</Link>
                         </div>
-                        <div className="date">
-                            <div>Дата редактирования:</div>
-                            <div>{editDate}</div>
+                        <div id="dates">
+                            <div className="date">
+                                <div>Дата создания:</div>
+                                <div>{creationDate}</div>
+                            </div>
+                            <div className="date">
+                                <div>Дата редактирования:</div>
+                                <div>{editDate}</div>
+                            </div>
                         </div>
+
                     </div>
                 </div>
             </div>
